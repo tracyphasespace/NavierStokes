@@ -2,6 +2,9 @@
 .lake/
 lake-packages/
 
+# Archive (historical files, not part of main build)
+# archive/
+
 # LaTeX build artifacts
 *.aux
 *.log
