@@ -1,0 +1,65 @@
+name = "NavierStokesPaper"
+version = "0.1.0"
+defaultTargets = ["NavierStokesPaper"]
+
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+version = "v4.27.0-rc1"
+
+[[lean_lib]]
+name = "Phase0_Analysis"
+srcDir = "."
+
+[[lean_lib]]
+name = "Phase1_Foundation"
+srcDir = "."
+
+[[lean_lib]]
+name = "Phase2_Operators"
+srcDir = "."
+
+[[lean_lib]]
+name = "Phase3_Isomorphism"
+srcDir = "."
+
+[[lean_lib]]
+name = "Phase4_Regularity"
+srcDir = "."
+
+[[lean_lib]]
+name = "NavierStokes_Core"
+srcDir = "."
+
+[[lean_lib]]
+name = "Phase2_Projection"
+srcDir = "."
+
+[[lean_lib]]
+name = "Phase3_Advection"
+srcDir = "."
+
+[[lean_lib]]
+name = "NavierStokes_Master"
+srcDir = "."
+
+[[lean_lib]]
+name = "Phase5_Equivalence"
+srcDir = "."
+
+[[lean_lib]]
+name = "Phase6_Cauchy"
+srcDir = "."
+
+[[lean_lib]]
+name = "QFD"
+srcDir = "."
+
+[[lean_lib]]
+name = "Phase7_Density"
+srcDir = "."
+
+[[lean_lib]]
+name = "NavierStokesPaper"
+srcDir = "."
+globs = ["Phase0_Analysis", "Phase1_Foundation", "Phase2_Operators", "Phase3_Isomorphism", "Phase4_Regularity", "NavierStokes_Core", "Phase2_Projection", "Phase3_Advection", "NavierStokes_Master", "Phase5_Equivalence", "Phase6_Cauchy", "QFD", "Phase7_Density"]
