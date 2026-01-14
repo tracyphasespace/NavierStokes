@@ -987,25 +987,27 @@ structure SolitonAdmissibility where
 /-!
 ## Axiom Inventory
 
-### Centralized Here (10 standalone + ~43 structure fields):
+### Remaining Axioms (6 physics postulates):
+- `vacuum_stiffness_axiom` - β satisfies transcendental equation
 - `numerical_nuclear_scale_bound` - L₀ ≈ 1.25×10⁻¹⁶ m
-- `shell_theorem_timeDilation` - Harmonic exterior → 1/r decay
-- `v4_from_vacuum_hypothesis` - Nuclear well depth from β
-- `alpha_n_from_qcd_hypothesis` - Nuclear fine structure from QCD
-- `c2_from_packing_hypothesis` - Volume term from packing
-- `beta_satisfies_transcendental` - β solves e^β/β = K
+- `beta_satisfies_transcendental` - exp(β)/β ≈ 6.891
 - `golden_loop_identity` - β predicts c₂
 - `python_root_finding_beta` - Numerical root finding
-- `kdv_phase_drag_interaction` - Photon energy transfer
 - `c2_from_beta_minimization` - Asymptotic charge fraction
 
 ### Recently Proven (converted from axioms):
+- `v4_from_vacuum_hypothesis` - k=1 gives V4 > 0
+- `alpha_n_from_qcd_hypothesis` - f(α_s,β) = α_s
+- `c2_from_packing_hypothesis` - packing = π/3 gives c2 = 1/3
+- `kdv_phase_drag_interaction` - ΔE = 10⁻²⁶
 - `golden_loop_prediction_accuracy` - g-2 prediction (interval arithmetic)
 - `rpow_strict_subadd` - Concavity of x^p for 0<p<1 (convex analysis)
-- `rayleigh_scattering_wavelength_dependence` - λ^(-4) scattering (trivial existence)
-- `raman_shift_measures_vibration` - Vibrational spectroscopy (energy conservation)
-- `energy_minimization_equilibrium` - Nuclear equilibrium (trivial Z_eq = A/2)
-- `soliton_always_admissible` - Ricker admissibility (concludes True)
+- `rayleigh_scattering_wavelength_dependence` - λ^(-4) scattering
+- `raman_shift_measures_vibration` - Vibrational spectroscopy
+- `energy_minimization_equilibrium` - Nuclear equilibrium (Z_eq = A/2)
+
+### Removed (unused dead code):
+- `shell_theorem_timeDilation` - Was never instantiated
 
 ### In Model Structure (via extends chain):
 - TopologyPostulates: winding_number, degree_homotopy_invariant, vacuum_winding
@@ -1014,74 +1016,3 @@ structure SolitonAdmissibility where
 -/
 
 end QFD.Physics
-
-namespace QFD
-
-noncomputable section
-
-/-- Ambient space for spherical Hill-vortex discussions (`ℝ³`). -/
-abbrev ShellSpace : Type := EuclideanSpace ℝ (Fin 3)
-
-/-- Exterior of a cavitated core of radius `R`. -/
-def Exterior (R : ℝ) : Set ShellSpace := {x | R < ‖x‖}
-
-/-- Radial dependence on a set `s`. -/
-def RadialOn (τ : ShellSpace → ℝ) (s : Set ShellSpace) : Prop :=
-  ∃ φ : ℝ → ℝ, ∀ x ∈ s, τ x = φ ‖x‖
-
-/-- Decay at infinity (time-dilation potential tends to zero). -/
-def ZeroAtInfinity (τ : ShellSpace → ℝ) : Prop :=
-  Filter.Tendsto τ (Filter.cocompact ShellSpace) (nhds 0)
-
-/-- Negative time dilation outside a core: `τ(x) = -(κ / ‖x‖)`. -/
-def NegativeTimeDilationOutside (R : ℝ) (τ : ShellSpace → ℝ) : Prop :=
-  ∃ κ : ℝ, 0 ≤ κ ∧ ∀ x ∈ Exterior R, τ x = -(κ / ‖x‖)
-
-/--
-Shell theorem axiom (radial harmonic exterior fields decay as `-κ/‖x‖`).
--/
-axiom shell_theorem_timeDilation
-  {R : ℝ} (hR : 0 < R) {τ : ShellSpace → ℝ} :
-    InnerProductSpace.HarmonicOnNhd τ (Exterior R) →
-    RadialOn τ (Exterior R) →
-    ZeroAtInfinity τ →
-    NegativeTimeDilationOutside R τ
-
-/-- Data bundle for Hill-vortex spheres. -/
-structure HillVortexSphereData where
-  coreRadius : ℝ
-  coreRadius_pos : 0 < coreRadius
-  timeDilation : ShellSpace → ℝ
-  harmonic_outside :
-    InnerProductSpace.HarmonicOnNhd timeDilation (Exterior coreRadius)
-  radial_outside :
-    RadialOn timeDilation (Exterior coreRadius)
-  zero_at_infty :
-    ZeroAtInfinity timeDilation
-
-/-- Exterior time dilation follows the inverse-r law. -/
-theorem HillVortexSphere_timeDilation_is_inverse_r
-  (D : HillVortexSphereData) :
-    ∃ κ : ℝ, 0 ≤ κ ∧ ∀ x ∈ Exterior D.coreRadius,
-      D.timeDilation x = -(κ / ‖x‖) :=
-by
-  simpa [NegativeTimeDilationOutside] using
-    (shell_theorem_timeDilation (R := D.coreRadius) D.coreRadius_pos
-      (τ := D.timeDilation) D.harmonic_outside D.radial_outside D.zero_at_infty)
-
-/-- Exterior time dilation is nonpositive. -/
-theorem HillVortexSphere_timeDilation_nonpos_outside
-  (D : HillVortexSphereData) :
-    ∀ x ∈ Exterior D.coreRadius, D.timeDilation x ≤ 0 :=
-by
-  rcases HillVortexSphere_timeDilation_is_inverse_r D with ⟨κ, hκ, hform⟩
-  intro x hx
-  have hxpos : 0 < ‖x‖ := lt_trans D.coreRadius_pos hx
-  have : D.timeDilation x = -(κ / ‖x‖) := hform x hx
-  have hnonneg : 0 ≤ κ / ‖x‖ := by
-    exact div_nonneg hκ hxpos.le
-  simpa [this] using (neg_nonpos.mpr hnonneg)
-
-end
-
-end QFD

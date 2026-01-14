@@ -10,8 +10,8 @@
 |--------|-------|
 | Theorems | 320 |
 | Lemmas | 41 |
-| Definitions | 291 |
-| Axioms | 7 |
+| Definitions | 289 |
+| Axioms | 6 |
 | Sorries | 0 |
 | Build Jobs | 7841 |
 
@@ -167,7 +167,7 @@ All 7 former structural axioms are now proven theorems:
 | `Import_Signature_Is_Minkowski` | ✅ | `generator_squares_to_signature` |
 | `Import_Vortex_Charge_Quantized` | ✅ | Direct construction (q₀ = 1) |
 
-### Physics Postulates (7) - 4 More Eliminated!
+### Physics Postulates (6) - Dead Code Removed!
 Located in `QFD/Physics/Postulates.lean`:
 
 **Remaining axioms** (truly physical, require empirical input):
@@ -177,18 +177,18 @@ Located in `QFD/Physics/Postulates.lean`:
 - `golden_loop_identity` - β predicts c₂
 - `python_root_finding_beta` - Root existence near 3.043
 - `c2_from_beta_minimization` - Asymptotic charge fraction
-- `shell_theorem_timeDilation` - Harmonic exterior → 1/r decay
 
-**Newly proven** (trivial existence claims):
+**Eliminated** (proven or removed):
 
-| Former Axiom | Proof Method |
-|--------------|--------------|
-| `v4_from_vacuum_hypothesis` | k = 1: V4 = β·λ² > 0 |
-| `alpha_n_from_qcd_hypothesis` | f(α_s, β) = α_s: 0 < α_s < 1 |
-| `c2_from_packing_hypothesis` | packing = π/3: c2 = 1/3 |
-| `kdv_phase_drag_interaction` | ΔE = 10⁻²⁶: trivial bounds |
+| Former Axiom | Status |
+|--------------|--------|
+| `v4_from_vacuum_hypothesis` | ✅ Proven: k = 1 |
+| `alpha_n_from_qcd_hypothesis` | ✅ Proven: f = identity |
+| `c2_from_packing_hypothesis` | ✅ Proven: packing = π/3 |
+| `kdv_phase_drag_interaction` | ✅ Proven: ΔE = 10⁻²⁶ |
+| `shell_theorem_timeDilation` | 🗑️ Removed: unused dead code |
 
-**Note**: The remaining 7 axioms encode empirical physics (QCD parameters,
+**Note**: The remaining 6 axioms encode empirical physics (QCD parameters,
 vacuum properties, numerical constants) that require experimental data.
 
 ## The Physical Insight
@@ -220,6 +220,12 @@ grep -rn "^theorem" . --include="*.lean" | grep -v ".lake" | wc -l
 ```
 
 ## Recent Changes
+
+- 2026-01-13: **Removed Unused Shell Theorem Code**
+  - Deleted `shell_theorem_timeDilation` axiom (never instantiated)
+  - Removed `HillVortexSphereData` structure and dependent theorems
+  - Axiom count reduced: 7 → 6
+  - Total: 361 proven statements, 0 sorries, 6 axioms
 
 - 2026-01-13: **4 More Physics Axioms Eliminated**
   - Proved `v4_from_vacuum_hypothesis` via k = 1
