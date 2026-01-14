@@ -2,8 +2,8 @@ import Mathlib.LinearAlgebra.CliffordAlgebra.Basic
 import Mathlib.LinearAlgebra.CliffordAlgebra.Grading
 import Mathlib.Tactic.Ring
 import Phase1_Foundation.Cl33
-import QFD.QM_Translation.DiracRealization
-import QFD.QM_Translation.SchrodingerEvolution
+import Phase2_Operators.DiracRealization
+import Phase2_Operators.SchrodingerEvolution
 
 /-!
 # The Real Dirac Equation (Grand Unification of Spin)

@@ -1,7 +1,7 @@
 import Phase1_Foundation.Cl33
 import Phase1_Foundation.BasisOperations
-import QFD.GA.PhaseCentralizer
-import QFD.Electrodynamics.MaxwellReal
+import Phase1_Foundation.PhaseCentralizer
+-- import QFD.Electrodynamics.MaxwellReal  -- REMOVED: QFD physics module
 
 /-!
 # Cl(3,3) Beltrami Equation: Force-Free Fields in Phase Centralizer

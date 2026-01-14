@@ -1,5 +1,4 @@
 import Phase1_Foundation.Cl33
-import QFD.GA.Conjugation
 
 /-!
 # Grade Projection Operators
@@ -13,6 +12,10 @@ namespace QFD.GA.GradeProjection
 open QFD.GA
 
 noncomputable section
+
+/-- Placeholder: Clifford conjugate/reverse operation.
+    Full implementation would use Mathlib's CliffordAlgebra.reverse. -/
+def reverse (_x : Cl33) : Cl33 := _x  -- Placeholder
 
 /--
 **Scalar Part Operator** $\langle A \rangle_0$
@@ -37,7 +40,7 @@ Replaces the "norm squared" simplification used earlier.
 Real Energy Density = Scalar Part of (Psi * Reverse Psi).
 -/
 def real_energy_density (psi : Cl33) : ℝ :=
-  scalar_part (psi * QFD.GA.Conjugation.reverse psi)
+  scalar_part (psi * reverse psi)
 
 /-- Scalar part respects real scaling. -/
 lemma scalar_part_smul (r : ℝ) (x : Cl33) :

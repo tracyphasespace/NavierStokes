@@ -9,57 +9,53 @@ version = "v4.27.0-rc1"
 
 [[lean_lib]]
 name = "Phase0_Analysis"
-srcDir = "."
+srcDir = "Lean"
 
 [[lean_lib]]
 name = "Phase1_Foundation"
-srcDir = "."
+srcDir = "Lean"
 
 [[lean_lib]]
 name = "Phase2_Operators"
-srcDir = "."
+srcDir = "Lean"
 
 [[lean_lib]]
 name = "Phase3_Isomorphism"
-srcDir = "."
+srcDir = "Lean"
 
 [[lean_lib]]
 name = "Phase4_Regularity"
-srcDir = "."
+srcDir = "Lean"
 
 [[lean_lib]]
 name = "NavierStokes_Core"
-srcDir = "."
+srcDir = "Lean"
 
 [[lean_lib]]
 name = "Phase2_Projection"
-srcDir = "."
+srcDir = "Lean"
 
 [[lean_lib]]
 name = "Phase3_Advection"
-srcDir = "."
+srcDir = "Lean"
 
 [[lean_lib]]
 name = "NavierStokes_Master"
-srcDir = "."
+srcDir = "Lean"
 
 [[lean_lib]]
 name = "Phase5_Equivalence"
-srcDir = "."
+srcDir = "Lean"
 
 [[lean_lib]]
 name = "Phase6_Cauchy"
-srcDir = "."
-
-[[lean_lib]]
-name = "QFD"
-srcDir = "."
+srcDir = "Lean"
 
 [[lean_lib]]
 name = "Phase7_Density"
-srcDir = "."
+srcDir = "Lean"
 
 [[lean_lib]]
 name = "NavierStokesPaper"
-srcDir = "."
-globs = ["Phase0_Analysis", "Phase1_Foundation", "Phase2_Operators", "Phase3_Isomorphism", "Phase4_Regularity", "NavierStokes_Core", "Phase2_Projection", "Phase3_Advection", "NavierStokes_Master", "Phase5_Equivalence", "Phase6_Cauchy", "QFD", "Phase7_Density"]
+srcDir = "Lean"
+globs = ["Phase0_Analysis", "Phase1_Foundation", "Phase2_Operators", "Phase3_Isomorphism", "Phase4_Regularity", "NavierStokes_Core", "Phase2_Projection", "Phase3_Advection", "NavierStokes_Master", "Phase5_Equivalence", "Phase6_Cauchy", "Phase7_Density"]

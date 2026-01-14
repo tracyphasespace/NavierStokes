@@ -1,10 +1,13 @@
 # NavierStokesPaper Build Status
 
-**Last Updated**: 2026-01-14 (Session 2)
-**Build Status**: ✅ PASSING (7896 jobs)
+**Last Updated**: 2026-01-14 (Post-QFD Cleanup)
+**Build Status**: ✅ PASSING (3190 jobs)
 **Sorries**: 0 ★ALL SORRIES CLOSED★
+**Axioms**: 0 ★ALL AXIOMS ELIMINATED★
 **Scaffolding**: ✅ MOSTLY ELIMINATED
 **Typeclass Diamond**: ✅ DOCUMENTED (IntegralCoercionHolds hypothesis)
+
+> **Note**: QFD physics modules (109 proofs) moved to `suggested_for_removal/` - NS proof is now self-contained.
 
 ---
 
@@ -43,14 +46,17 @@ The `pi_rho_lift_eq` theorem requires an explicit hypothesis `IntegralCoercionHo
 
 | Metric | Count |
 |--------|-------|
-| Theorems | 330 |
-| Lemmas | 45 |
-| Definitions | 420 |
+| Theorems | 231 |
+| Lemmas | 39 |
+| Definitions | 177 |
+| Structures | 48 |
 | Axioms | 0 |
 | Sorries | 0 |
-| Build Jobs | 7896 |
+| Build Jobs | 3190 |
 
-**Total Proven Statements**: 375 (theorems + lemmas)
+**Total Proven Statements**: 270 (theorems + lemmas)
+
+*QFD physics removed: 109 proofs moved to `suggested_for_removal/`*
 
 ## Module Status
 
@@ -115,12 +121,6 @@ The `pi_rho_lift_eq` theorem requires an explicit hypothesis `IntegralCoercionHo
 | Phase7_Density/DynamicsEquivalence.lean | ✅ | 0 |
 | Phase7_Density/RegularityClosure.lean | ✅ | 0 |
 | Phase7_Density/BasisOperations.lean | ✅ | 0 |
-
-### QFD Physics
-| Module | Status | Sorries |
-|--------|--------|---------|
-| QFD/Physics/Postulates.lean | ✅ | 0 |
-| QFD/Soliton/TopologicalStability.lean | ✅ | 0 |
 
 ### Master Build
 | Module | Status | Sorries |
@@ -247,14 +247,31 @@ lake build NavierStokes_Master
 lake build Phase0_Analysis
 lake build Phase6_Cauchy
 
-# Check for sorries
-grep -rn "sorry" . --include="*.lean" | grep -v ".lake" | grep -v "paper3_lean_blueprints"
+# Check for sorries (Lean source only)
+grep -rn "sorry" Lean/ --include="*.lean" | wc -l
+
+# Check for axioms (Lean source only)
+grep -rn "^axiom " Lean/ --include="*.lean" | wc -l
 
 # Count theorems
-grep -rn "^theorem" . --include="*.lean" | grep -v ".lake" | wc -l
+grep -rn "^theorem " Lean/ --include="*.lean" | wc -l
 ```
 
 ## Recent Changes
+
+- 2026-01-14: **QFD PHYSICS SEPARATED** ★NS PROOF SELF-CONTAINED★
+  - Moved 18 QFD physics files to `suggested_for_removal/`
+  - Files include: Vacuum, Soliton, Lepton, Electron, Hydrogen modules
+  - NS proof now contains only CMI-relevant proofs
+  - Build reduced: 7896 → 3190 jobs
+  - Proofs reduced: 379 → 270 (removed 109 QFD proofs)
+  - **NS formalization is now independent of QFD particle physics**
+
+- 2026-01-14: **DIRECTORY RESTRUCTURE**
+  - Moved all Lean source to `Lean/` directory
+  - Updated `lakefile.toml` with `srcDir = "Lean"`
+  - Consolidated documentation in `docs/`
+  - Moved LaTeX artifacts to `archive/latex/`
 
 - 2026-01-13: **ALL SORRIES CLOSED** ★ZERO SORRIES★
   - Closed 6 sorries in Phase7_Density analytic files

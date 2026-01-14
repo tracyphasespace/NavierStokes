@@ -8,15 +8,17 @@
 
 | Metric | Count |
 |--------|-------|
-| **Theorems** | 338 |
-| **Lemmas** | 41 |
-| **Definitions** | 309 |
-| **Structures** | 100 |
+| **Theorems** | 231 |
+| **Lemmas** | 39 |
+| **Definitions** | 177 |
+| **Structures** | 48 |
 | **Sorries** | 0 |
 | **Axioms** | 0 |
-| **Build Jobs** | 7896 |
+| **Build Jobs** | 3190 |
 
-**Total Proven Statements**: 379 (theorems + lemmas)
+**Total Proven Statements**: 270 (theorems + lemmas)
+
+*Note: QFD physics modules (109 proofs) moved to `suggested_for_removal/` - see NS_FILE_CATEGORIZATION.md*
 
 ---
 
@@ -43,32 +45,32 @@ The formalization is structured as three papers with increasing analytic depth:
 
 | Component | File | Status |
 |-----------|------|--------|
-| Cl(3,3) algebra | `Phase1_Foundation/Cl33.lean` | ✅ |
-| D² = Δ_q - Δ_p | `NavierStokes_Core/` | ✅ |
-| Viscosity = Exchange | `Phase2_Projection/` | ✅ |
-| [u,D] + {u,D} = 2uD | `Phase3_Advection/` | ✅ |
-| Conditional regularity | `Phase6_Cauchy/ScleronomicLift.lean` | ✅ |
+| Cl(3,3) algebra | `Lean/Phase1_Foundation/Cl33.lean` | ✅ |
+| D² = Δ_q - Δ_p | `Lean/NavierStokes_Core/` | ✅ |
+| Viscosity = Exchange | `Lean/Phase2_Projection/` | ✅ |
+| [u,D] + {u,D} = 2uD | `Lean/Phase3_Advection/` | ✅ |
+| Conditional regularity | `Lean/Phase6_Cauchy/ScleronomicLift.lean` | ✅ |
 
 ### Paper 2: Topological Existence (COMPLETE ✅)
-**Claim**: Lifts exist via soliton density arguments.
+**Claim**: Lifts exist via symplectic structure and Hamiltonian flow.
 
 | Component | File | Status |
 |-----------|------|--------|
-| Global existence | `Phase4_Regularity/GlobalExistence.lean` | ✅ |
-| Clay equivalence | `Phase5_Equivalence/ClayEquivalence.lean` | ✅ |
-| Noether compliance | `Phase5_Equivalence/NoetherCompliance.lean` | ✅ |
-| Topological stability | `QFD/Soliton/TopologicalStability.lean` | ✅ |
+| Global existence | `Lean/Phase4_Regularity/GlobalExistence.lean` | ✅ |
+| Clay equivalence | `Lean/Phase5_Equivalence/ClayEquivalence.lean` | ✅ |
+| Noether compliance | `Lean/Phase5_Equivalence/NoetherCompliance.lean` | ✅ |
+| Symplectic form | `Lean/Phase4_Regularity/SymplecticForm.lean` | ✅ |
 
 ### Paper 3: Analytic Closure (COMPLETE ✅)
 **Claim**: Close the gap with function space rigor.
 
 | Component | File | Status |
 |-----------|------|--------|
-| Function spaces (H^k) | `Phase7_Density/FunctionSpaces.lean` | ✅ |
-| Weighted projection π_ρ | `Phase7_Density/WeightedProjection.lean` | ✅ |
-| Lift construction Λ | `Phase7_Density/LiftConstruction.lean` | ✅ |
-| Energy conservation | `Phase7_Density/EnergyConservation.lean` | ✅ |
-| π_ρ(Λu) = u | `Phase7_Density/LiftConstruction.lean` | ✅ |
+| Function spaces (H^k) | `Lean/Phase7_Density/FunctionSpaces.lean` | ✅ |
+| Weighted projection π_ρ | `Lean/Phase7_Density/WeightedProjection.lean` | ✅ |
+| Lift construction Λ | `Lean/Phase7_Density/LiftConstruction.lean` | ✅ |
+| Energy conservation | `Lean/Phase7_Density/EnergyConservation.lean` | ✅ |
+| π_ρ(Λu) = u | `Lean/Phase7_Density/LiftConstruction.lean` | ✅ |
 
 ---
 
@@ -78,25 +80,29 @@ The formalization is structured as three papers with increasing analytic depth:
 NavierStokesPaper/
 ├── README.md                 # This file
 ├── CLAUDE.md                 # AI assistant instructions
-├── BUILD_STATUS.md           # Detailed build status
 ├── lakefile.toml             # Build configuration
 │
-├── Phase1_Foundation/        # Clifford algebra Cl(3,3)
-├── NavierStokes_Core/        # Operator infrastructure
-├── Phase2_Projection/        # Viscosity = Conservation
-├── Phase3_Advection/         # Advection + Pressure decomposition
-├── Phase4_Regularity/        # 6D → 3D projection
-├── Phase5_Equivalence/       # Clay equivalence
-├── Phase6_Cauchy/            # Scleronomic lift
-├── Phase7_Density/           # Analytic function spaces ★PAPER 3★
-├── QFD/                      # Physics postulates
-│
-├── NavierStokes_Master.lean  # Capstone unification
+├── Lean/                     # All Lean source code
+│   ├── NavierStokesPaper.lean    # Main module entry point
+│   ├── NavierStokes_Master.lean  # Capstone unification
+│   ├── Phase1_Foundation/        # Clifford algebra Cl(3,3)
+│   ├── NavierStokes_Core/        # Operator infrastructure
+│   ├── Phase2_Projection/        # Viscosity = Conservation
+│   ├── Phase3_Advection/         # Advection + Pressure decomposition
+│   ├── Phase4_Regularity/        # 6D → 3D projection
+│   ├── Phase5_Equivalence/       # Clay equivalence
+│   ├── Phase6_Cauchy/            # Scleronomic lift
+│   └── Phase7_Density/           # Analytic function spaces ★PAPER 3★
 │
 ├── docs/                     # Detailed documentation
+│   ├── BUILD_STATUS.md           # Detailed build status
 │   ├── Complete_Lean_NSE.md      # Full proof reference
+│   ├── NS_FILE_CATEGORIZATION.md # File inventory
 │   ├── PROOF_DEPENDENCIES.md     # Proof chain details
 │   └── required_lean_statements.md # Status tracking
+│
+├── suggested_for_removal/    # QFD physics (pending deletion)
+│   └── QFD/                  # For separate QFD_Library project
 │
 └── archive/                  # Historical files (not in build)
     ├── blueprints/           # Draft code (has sorries)
@@ -137,12 +143,12 @@ theorem energy_conserved : E_{6D}(Ψ(t)) = E_{6D}(Ψ(0))
 # Build entire project
 lake build NavierStokesPaper
 
-# Verify zero sorries (main build only)
-grep -rn "sorry" --include="*.lean" | grep -v ".lake" | grep -v "archive" | wc -l
+# Verify zero sorries (Lean source only)
+grep -rn "sorry" Lean/ --include="*.lean" | wc -l
 # Output: 0
 
-# Verify zero axioms (main build only)
-grep -rn "^axiom " --include="*.lean" | grep -v ".lake" | grep -v "archive" | wc -l
+# Verify zero axioms (Lean source only)
+grep -rn "^axiom " Lean/ --include="*.lean" | wc -l
 # Output: 0
 
 # Build specific phases

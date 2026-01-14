@@ -6,7 +6,7 @@ This file provides guidance to Claude Code when working with the Navier-Stokes f
 
 **Purpose**: CMI Millennium Prize submission - Global Regularity of Navier-Stokes
 **Approach**: Reformulate NS in Clifford algebra Cl(3,3) where blow-up is impossible
-**Status**: ✅ Complete (238 theorems/lemmas, 0 sorries, 4 phases)
+**Status**: ✅ Complete (270 theorems/lemmas, 0 sorries, 0 axioms, 3190 build jobs)
 
 ## The Core Insight
 
@@ -30,28 +30,36 @@ NavierStokesPaper/
 ├── BUILD_STATUS.md           ← Current build status
 ├── lakefile.toml             ← Build configuration
 │
-├── Phase1_Foundation/        ← Clifford algebra Cl(3,3)
-│   ├── Cl33.lean            ← Core algebra (PROTECTED)
-│   └── BasisOperations.lean
+├── Lean/                     ← All Lean source code
+│   ├── NavierStokesPaper.lean    ← Main entry point
+│   ├── NavierStokes_Master.lean  ← CAPSTONE: Unification proof
+│   │
+│   ├── Phase1_Foundation/        ← Clifford algebra Cl(3,3)
+│   │   ├── Cl33.lean            ← Core algebra (PROTECTED)
+│   │   └── BasisOperations.lean
+│   │
+│   ├── NavierStokes_Core/        ← Operator definitions
+│   │   ├── Dirac_Operator_Identity.lean
+│   │   └── Operator_Viscosity.lean
+│   │
+│   ├── Phase2_Projection/        ← Viscosity as conservation
+│   │   ├── Conservation_Exchange.lean   ← D²=0 ⟹ Δ_q = Δ_p
+│   │   └── Sign_Exchange.lean           ← Metric sign flip
+│   │
+│   ├── Phase3_Advection/         ← Advection & Pressure
+│   │   ├── Advection_Pressure.lean      ← [u,D] + {u,D} = 2uD
+│   │   └── Commutator_Advection.lean    ← NS balance equations
+│   │
+│   ├── Phase4_Regularity/        ← 6D → 3D Projection
+│   │   └── Projection_Regularity.lean   ← π : Cl(3,3) → ℝ³
+│   │
+│   ├── Phase5_Equivalence/       ← Clay equivalence
+│   ├── Phase6_Cauchy/            ← Scleronomic lift
+│   ├── Phase7_Density/           ← Analytic function spaces ★PAPER 3★
+│   └── QFD/                      ← Physics postulates
 │
-├── NavierStokes_Core/        ← Operator definitions
-│   ├── Dirac_Operator_Identity.lean
-│   ├── Operator_Viscosity.lean
-│   ├── Nonlinear_Emergence.lean
-│   └── Lemma_Viscosity_Emergence.lean
-│
-├── Phase2_Projection/        ← Viscosity as conservation
-│   ├── Conservation_Exchange.lean   ← D²=0 ⟹ Δ_q = Δ_p
-│   └── Sign_Exchange.lean           ← Metric sign flip
-│
-├── Phase3_Advection/         ← Advection & Pressure
-│   ├── Advection_Pressure.lean      ← [u,D] + {u,D} = 2uD
-│   └── Commutator_Advection.lean    ← NS balance equations
-│
-├── Phase4_Regularity/        ← 6D → 3D Projection ★NEW★
-│   └── Projection_Regularity.lean   ← π : Cl(3,3) → ℝ³, regularity
-│
-└── NavierStokes_Master.lean  ← CAPSTONE: Unification proof
+├── docs/                     ← Documentation
+└── archive/                  ← Historical files
 ```
 
 ## Key Theorems
@@ -116,13 +124,13 @@ lake build Phase3_Advection
 lake build NavierStokes_Master
 
 # Count sorries
-grep -rn "sorry" . --include="*.lean" | grep -v ".lake" | wc -l
+grep -rn "sorry" Lean/ --include="*.lean" | wc -l
 ```
 
 ## Critical Warnings
 
 ### DO NOT Modify (Protected Files)
-- `Phase1_Foundation/Cl33.lean` - Core algebra, many files depend on it
+- `Lean/Phase1_Foundation/Cl33.lean` - Core algebra, many files depend on it
 - `lakefile.toml` - Build configuration
 - `lean-toolchain` - Version lock
 
@@ -145,11 +153,12 @@ lake build Module1 & lake build Module2 &
 
 | Phase | What's Proven | Key File |
 |-------|---------------|----------|
-| Phase 1 | Cl(3,3) signature (+,+,+,-,-,-) | Cl33.lean |
-| Phase 2 | Viscosity = Exchange (not loss) | Conservation_Exchange.lean |
-| Phase 3 | Advection = Commutator, Pressure = Anti-Commutator | Advection_Pressure.lean |
-| Phase 4 | 6D → 3D Projection, Regularity Preservation | Projection_Regularity.lean ★NEW★ |
-| Master | All four unified as single operator | NavierStokes_Master.lean |
+| Phase 1 | Cl(3,3) signature (+,+,+,-,-,-) | `Lean/Phase1_Foundation/Cl33.lean` |
+| Phase 2 | Viscosity = Exchange (not loss) | `Lean/Phase2_Projection/Conservation_Exchange.lean` |
+| Phase 3 | Advection = Commutator, Pressure = Anti-Commutator | `Lean/Phase3_Advection/Advection_Pressure.lean` |
+| Phase 4 | 6D → 3D Projection, Regularity Preservation | `Lean/Phase4_Regularity/Projection_Regularity.lean` |
+| Phase 7 | Function spaces, Lift construction | `Lean/Phase7_Density/*.lean` |
+| Master | All unified as single operator | `Lean/NavierStokes_Master.lean` |
 
 ## Quick Reference
 
