@@ -8,14 +8,14 @@
 
 | Metric | Count |
 |--------|-------|
-| Theorems | 309 |
+| Theorems | 310 |
 | Lemmas | 41 |
 | Definitions | 293 |
-| Axioms | 18 |
+| Axioms | 17 |
 | Sorries | 0 |
 | Build Jobs | 7896 |
 
-**Total Proven Statements**: 350 (theorems + lemmas)
+**Total Proven Statements**: 351 (theorems + lemmas)
 
 ## Module Status
 
@@ -122,6 +122,12 @@
 - `global_regularity_3D` - Global regularity theorem
 - `no_blowup_from_chain` - No finite-time blow-up
 
+### Phase 5: Noether Compliance ★UPDATED★
+- `Jacobi_Identity_Commutator` - **PROVEN**: [A,[B,C]] + [B,[C,A]] + [C,[A,B]] = 0
+- `Vorticity_Self_Conservation` - [u,u] = 0
+- `Momentum_Noether_Compliance` - NS momentum equation from Noether
+- `Ultrahyperbolic_To_Parabolic_Equivalence` - D²=0 + thermal time → heat equation
+
 ### Phase 6: Scleronomic Lift
 - `Scleronomic_Lift_Theorem` - Direct construction (p=0)
 - `Scleronomic_Lift_Conjecture` - Now a theorem (was axiom)
@@ -148,7 +154,7 @@
 
 ## Axiom Classification
 
-### Structural Axioms (7)
+### Structural Axioms (6)
 Located in `Phase5_Equivalence/`:
 - `Import_Spatial_Commutes_With_B`
 - `Import_Time_Commutes_With_B`
@@ -156,7 +162,8 @@ Located in `Phase5_Equivalence/`:
 - `Import_Spectral_Gap_Exists`
 - `Import_Signature_Is_Minkowski`
 - `Import_Vortex_Charge_Quantized`
-- `Jacobi_Identity_Commutator`
+
+**Eliminated**: `Jacobi_Identity_Commutator` → Now a theorem (proven via `mul_sub`, `sub_mul`, `mul_assoc`, `abel`)
 
 ### Physics Postulates (11)
 Located in `QFD/Physics/Postulates.lean`:
@@ -195,11 +202,16 @@ grep -rn "^theorem" . --include="*.lean" | grep -v ".lake" | wc -l
 
 ## Recent Changes
 
+- 2026-01-13: **Jacobi Identity Axiom Eliminated**
+  - Proved `Jacobi_Identity_Commutator` theorem
+  - Proof: `unfold Commutator; simp only [mul_sub, sub_mul, mul_assoc]; abel`
+  - Axiom count reduced: 18 → 17
+  - Total: 351 proven statements, 0 sorries
+
 - 2026-01-13: **Phase 0 Analytic Layer Complete**
   - Created `Phase0_Analysis/ConcreteInstantiation.lean`
   - Proved `scleronomic_lift_unconditional` - lift exists for any velocity
   - Fixed `Phase6_Cauchy/ScleronomicLift_Analytic.lean` compilation
-  - Total: 350 proven statements, 0 sorries
 
 - 2026-01-13: **Paper 3 Gap Closed**
   - `Scleronomic_Lift_Conjecture` is now a theorem (two routes)

@@ -84,15 +84,32 @@ theorem Vorticity_Self_Conservation (u : Cl33) :
     Commutator u u = 0 := commutator_self u
 
 /--
-  **Axiom: Jacobi Identity Component**
-  For the commutator structure, the Jacobi identity holds.
+  **Theorem: Jacobi Identity for Commutators**
+
+  For the commutator structure, the Jacobi identity holds:
+    [A, [B, C]] + [B, [C, A]] + [C, [A, B]] = 0
+
   This relates [u, [D, u]] to other commutator terms.
 
-  Note: This is a standard algebraic identity, provable in the full QFD_SpectralGap
-  library using Mathlib's ring theory. Imported here as axiom for lightweight submission.
+  Proof: Direct expansion of the commutators shows all 12 terms cancel in pairs:
+    [A, [B,C]] = ABC - ACB - BCA + CBA
+    [B, [C,A]] = BCA - BAC - CAB + ACB
+    [C, [A,B]] = CAB - CBA - ABC + BAC
+    Sum = 0
+
+  [CLAIM NS5.1] [JACOBI_IDENTITY_PROVEN]
 -/
-axiom Jacobi_Identity_Commutator (A B C : Cl33) :
-    Commutator A (Commutator B C) + Commutator B (Commutator C A) + Commutator C (Commutator A B) = 0
+theorem Jacobi_Identity_Commutator (A B C : Cl33) :
+    Commutator A (Commutator B C) + Commutator B (Commutator C A) + Commutator C (Commutator A B) = 0 := by
+  unfold Commutator
+  -- Expand using distributivity: A*(B*C - C*B) = A*B*C - A*C*B, etc.
+  simp only [mul_sub, sub_mul]
+  -- Now we have 12 terms that cancel pairwise:
+  -- A*B*C - A*C*B - (B*C)*A + (C*B)*A + B*C*A - B*A*C - (C*A)*B + (A*C)*B + C*A*B - C*B*A - (A*B)*C + (B*A)*C
+  -- Use associativity and then abel
+  simp only [mul_assoc]
+  -- After associativity: A*B*C - A*C*B - B*C*A + C*B*A + B*C*A - B*A*C - C*A*B + A*C*B + C*A*B - C*B*A - A*B*C + B*A*C
+  abel
 
 /-! ## 3. The Equivalence Theorem -/
 
