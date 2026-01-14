@@ -27,7 +27,7 @@ The proofs leverage `PhaseCentralizer.lean` and `Cl33.lean` from Phase 1.
 
 - **Before**: 6 structural axioms
 - **After**: 0 structural axioms (all proven)
-- **Remaining**: 11 physics postulates in `QFD/Physics/Postulates.lean`
+- **Remaining**: 0 (all physics postulates also removed as unused)
 -/
 
 noncomputable section

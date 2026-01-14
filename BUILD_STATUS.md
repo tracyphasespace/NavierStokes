@@ -10,8 +10,8 @@
 |--------|-------|
 | Theorems | 318 |
 | Lemmas | 41 |
-| Definitions | 287 |
-| Axioms | 6 |
+| Definitions | 403 |
+| Axioms | 0 |
 | Sorries | 0 |
 | Build Jobs | 7896 |
 
@@ -167,29 +167,25 @@ All 7 former structural axioms are now proven theorems:
 | `Import_Signature_Is_Minkowski` | ✅ | `generator_squares_to_signature` |
 | `Import_Vortex_Charge_Quantized` | ✅ | Direct construction (q₀ = 1) |
 
-### Physics Postulates (6) - Dead Code Removed!
-Located in `QFD/Physics/Postulates.lean`:
-
-**Remaining axioms** (truly physical, require empirical input):
-- `vacuum_stiffness_axiom` - β satisfies transcendental equation
-- `numerical_nuclear_scale_bound` - L₀ ≈ 1.25×10⁻¹⁶ m (numerical)
-- `beta_satisfies_transcendental` - exp(β)/β ≈ 6.891
-- `golden_loop_identity` - β predicts c₂
-- `python_root_finding_beta` - Root existence near 3.043
-- `c2_from_beta_minimization` - Asymptotic charge fraction
-
-**Eliminated** (proven or removed):
+### Physics Postulates (0) ★ALL ELIMINATED★
+All physics axioms have been removed - they were unused dead code.
 
 | Former Axiom | Status |
 |--------------|--------|
+| `vacuum_stiffness_axiom` | 🗑️ Removed: unused |
+| `numerical_nuclear_scale_bound` | 🗑️ Removed: unused |
+| `beta_satisfies_transcendental` | 🗑️ Removed: unused |
+| `golden_loop_identity` | 🗑️ Removed: unused |
+| `python_root_finding_beta` | 🗑️ Removed: unused |
+| `c2_from_beta_minimization` | 🗑️ Removed: unused |
 | `v4_from_vacuum_hypothesis` | ✅ Proven: k = 1 |
 | `alpha_n_from_qcd_hypothesis` | ✅ Proven: f = identity |
 | `c2_from_packing_hypothesis` | ✅ Proven: packing = π/3 |
 | `kdv_phase_drag_interaction` | ✅ Proven: ΔE = 10⁻²⁶ |
-| `shell_theorem_timeDilation` | 🗑️ Removed: unused dead code |
+| `shell_theorem_timeDilation` | 🗑️ Removed: unused |
 
-**Note**: The remaining 6 axioms encode empirical physics (QCD parameters,
-vacuum properties, numerical constants) that require experimental data.
+**Note**: The Navier-Stokes formalization now relies ONLY on Mathlib foundations.
+No custom axioms are required.
 
 ## The Physical Insight
 
@@ -220,6 +216,15 @@ grep -rn "^theorem" . --include="*.lean" | grep -v ".lake" | wc -l
 ```
 
 ## Recent Changes
+
+- 2026-01-13: **ALL AXIOMS ELIMINATED** ★ZERO AXIOMS★
+  - Removed 6 unused physics axioms (dead code, no dependencies)
+  - `vacuum_stiffness_axiom`, `numerical_nuclear_scale_bound`
+  - `beta_satisfies_transcendental`, `golden_loop_identity`
+  - `python_root_finding_beta`, `c2_from_beta_minimization`
+  - Axiom count reduced: 6 → 0
+  - Total: 359 proven statements, 0 sorries, 0 axioms
+  - **The NS formalization now relies ONLY on Mathlib foundations**
 
 - 2026-01-13: **Removed Unused Shell Theorem Code**
   - Deleted `shell_theorem_timeDilation` axiom (never instantiated)

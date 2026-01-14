@@ -60,10 +60,6 @@ Derivation: Chapter 12.1.3 "The Golden Loop" -/
 noncomputable def beta_stability_equation (b : ℝ) : Prop :=
   (Real.pi^2) * (Real.exp b) * (b / (0.5 * (1 - alpha_qfd))) = (1 / alpha_qfd)
 
-/-- We postulate that Beta exists and satisfies the equation.
-(Numerical solution: approx 3.043233053) -/
-axiom vacuum_stiffness_axiom (β : ℝ) : beta_stability_equation β
-
 /-- The fundamental arena is 6-dimensional Phase Space, not 4D Spacetime.
 Metric Signature: (+,+,+, -,-,-)
 x : Spatial coordinates (e1, e2, e3) => square to +1
@@ -724,21 +720,6 @@ theorem rpow_strict_subadd
     _ = wa * (a + b) ^ p + wb * (a + b) ^ p := by ring
     _ < a ^ p + b ^ p := h_add
 
-/--
-Numerical bound connecting measured constants (ℏ, Γ, λ, c) to the nuclear core size.
-Encodes the verified computation L₀ = ℏ/(Γ λ c) ≈ 1.25 × 10⁻¹⁶ m.
--/
--- Numerical verification: L₀ = ℏ/(Γ λ c) ≈ 1.25 × 10⁻¹⁶ m
--- The exact arithmetic proof requires careful handling of scientific notation.
--- Verified numerically: 1.054571817e-34 / (1.6919 * 1.66053906660e-27 * 2.99792458e8) ≈ 1.25e-16
-axiom numerical_nuclear_scale_bound
-    {lam_val hbar_val gamma_val c_val : ℝ}
-    (h_lam : lam_val = 1.66053906660e-27)
-    (h_hbar : hbar_val = 1.054571817e-34)
-    (h_gamma : gamma_val = 1.6919)
-    (h_c : c_val = 2.99792458e8) :
-    abs (hbar_val / (gamma_val * lam_val * c_val) - 1.25e-16) < 1e-16
-
 /-! ### Nuclear Parameter Hypotheses -/
 
 /--
@@ -812,35 +793,6 @@ theorem c2_from_packing_hypothesis :
     have : Real.pi / Real.pi = 1 := div_self (ne_of_gt h_pi_pos)
     rw [this]
     norm_num
-
-/-! ### Golden Loop Axioms -/
-
-/--
-β satisfies the transcendental equation e^β/β = K to high precision.
-Source: `GoldenLoop.lean`
--/
-axiom beta_satisfies_transcendental :
-    abs (Real.exp beta_golden / beta_golden - 6.891) < 0.001
-
-/--
-The Golden Loop identity: β predicts c₂ = 1/β within NuBase uncertainty.
-Source: `GoldenLoop.lean`
--/
-axiom golden_loop_identity :
-  ∀ (alpha_inv c1 pi_sq beta : ℝ),
-  (Real.exp beta) / beta = (alpha_inv * c1) / pi_sq →
-  abs ((1 / beta) - 0.32704) < 0.002
-
-/--
-Numerical root-finding verifies β ≈ 3.043 solves e^β/β = K.
-Source: `VacuumEigenvalue.lean`
--/
-axiom python_root_finding_beta :
-  ∀ (K : ℝ) (h_K : abs (K - 6.891) < 0.01),
-    ∃ (β : ℝ),
-      2 < β ∧ β < 4 ∧
-      abs (Real.exp β / β - K) < 1e-10 ∧
-      abs (β - 3.043) < 0.015
 
 /-! ### Photon Scattering Axioms -/
 
@@ -956,16 +908,6 @@ theorem energy_minimization_equilibrium :
   refine ⟨A / 2, ?_, ?_⟩
   · linarith
   · linarith
-
-/--
-c₂ from β minimization: asymptotic charge fraction approaches 1/β.
-Source: `Nuclear/SymmetryEnergyMinimization.lean`
--/
-axiom c2_from_beta_minimization :
-  ∀ (β : ℝ) (h_beta : β > 0),
-    ∃ (ε : ℝ), ε > 0 ∧ ε < 0.05 ∧
-    ∀ (A : ℝ), A > 100 →
-      ∃ (Z_eq : ℝ), abs (Z_eq / A - 1 / β) < ε
 
 /-! ### Soliton Boundary Axioms -/
 
