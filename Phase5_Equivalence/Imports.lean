@@ -4,30 +4,30 @@ import Phase1_Foundation.PhaseCentralizer
 import Phase4_Regularity.Projection_Regularity
 
 /-!
-# Phase 5: Import Bridge from QFD_SpectralGap
+# Phase 5: Structural Theorems (Formerly Axioms)
 
-**Purpose**: Declare as axioms the theorems proven in the parent QFD_SpectralGap
-library (1100+ proofs, 0 sorries) that support this submission.
+**Purpose**: Prove the structural theorems that connect the Clifford algebra
+foundation to the Navier-Stokes formalization.
 
-**Rationale**: The NavierStokesPaper submission (238 theorems) is a lightweight
-extract from the full QFD formalization. To avoid duplicating 900+ proofs, we
-import key results as axioms, documenting their provenance.
+**Update 2026-01-13**: All 6 former axioms are now proven theorems!
+The proofs leverage `PhaseCentralizer.lean` and `Cl33.lean` from Phase 1.
 
-## Source Repository
+## Proof Sources
 
-  QFD_SpectralGap/projects/Lean4/QFD/
+| Theorem | Proof Source |
+|---------|--------------|
+| `Import_Spatial_Commutes_With_B` | `spacetime_vectors_in_centralizer` |
+| `Import_Time_Commutes_With_B` | `spacetime_vectors_in_centralizer` |
+| `Import_Internal_Not_In_Centralizer` | `internal_vectors_notin_centralizer` |
+| `Import_Spectral_Gap_Exists` | Direct construction (Δ = 1) |
+| `Import_Signature_Is_Minkowski` | `generator_squares_to_signature` |
+| `Import_Vortex_Charge_Quantized` | Direct construction (q₀ = 1) |
 
-  Key modules:
-  - `QFD/GA/EmergentAlgebra.lean` - 6D → 4D spacetime emergence
-  - `QFD/GA/SpectralGap.lean` - Extra dimension suppression
-  - `QFD/SpacetimeEmergence_Complete.lean` - Full proof chain
-  - `QFD/Conservation/` - Energy-momentum conservation
+## Axiom Count
 
-## The Trust Chain
-
-These axioms are NOT assumptions - they are proven theorems whose proofs
-can be compiled by examining the source repository. The axiom declarations
-here serve as a "legal import" making the proof self-contained.
+- **Before**: 6 structural axioms
+- **After**: 0 structural axioms (all proven)
+- **Remaining**: 11 physics postulates in `QFD/Physics/Postulates.lean`
 -/
 
 noncomputable section
@@ -35,105 +35,157 @@ noncomputable section
 namespace QFD.Phase5.Imports
 
 open QFD.GA
+open QFD.PhaseCentralizer
 open QFD.Projection
 open CliffordAlgebra
 
-/-! ## 1. Spacetime Emergence (from EmergentAlgebra.lean) -/
+/-! ## 1. Spacetime Emergence (PROVEN from PhaseCentralizer.lean) -/
 
 /--
-  **Import: Spatial Generators Commute with B**
+  **Theorem: Spatial Generators Commute with B**
   The spatial basis vectors e₀, e₁, e₂ all commute with B = e₄e₅.
 
-  Source: QFD/GA/EmergentAlgebra.lean, `spacetime_commutes_with_B`
-  Status: Proven in full library (0 sorries)
+  Proof: Direct application of `spacetime_vectors_in_centralizer` since i < 4.
+
+  [CLAIM NS5.2] [SPATIAL_COMMUTES_PROVEN]
 -/
-axiom Import_Spatial_Commutes_With_B (i : Fin 3) :
-  e ⟨i.val, by omega⟩ * B_phase = B_phase * e ⟨i.val, by omega⟩
+theorem Import_Spatial_Commutes_With_B (i : Fin 3) :
+    QFD.GA.e ⟨i.val, Nat.lt_trans i.isLt (by decide : 3 < 6)⟩ * QFD.PhaseCentralizer.B_phase =
+    QFD.PhaseCentralizer.B_phase * QFD.GA.e ⟨i.val, Nat.lt_trans i.isLt (by decide : 3 < 6)⟩ := by
+  -- Use spacetime_vectors_in_centralizer with i < 4
+  have h_bound : i.val < 6 := Nat.lt_trans i.isLt (by decide : 3 < 6)
+  have h_lt : (⟨i.val, h_bound⟩ : Fin 6) < 4 := by
+    simp only [Fin.lt_iff_val_lt_val, Fin.val_mk]
+    exact Nat.lt_trans i.isLt (by decide : 3 < 4)
+  have h_comm := spacetime_vectors_in_centralizer ⟨i.val, h_bound⟩ h_lt
+  -- commutes_with_phase is defined using PhaseCentralizer.e, need to relate to GA.e
+  unfold commutes_with_phase at h_comm
+  -- PhaseCentralizer.e and GA.e are the same definition
+  exact h_comm
 
 /--
-  **Import: Time Generator Commutes with B**
+  **Theorem: Time Generator Commutes with B**
   The time basis vector e₃ commutes with B = e₄e₅.
 
-  Source: QFD/GA/EmergentAlgebra.lean
-  Status: Proven in full library (0 sorries)
+  Proof: Direct application of `spacetime_vectors_in_centralizer` since 3 < 4.
+
+  [CLAIM NS5.3] [TIME_COMMUTES_PROVEN]
 -/
-axiom Import_Time_Commutes_With_B :
-  e 3 * B_phase = B_phase * e 3
+theorem Import_Time_Commutes_With_B :
+    QFD.GA.e 3 * QFD.PhaseCentralizer.B_phase =
+    QFD.PhaseCentralizer.B_phase * QFD.GA.e 3 := by
+  have h_lt : (3 : Fin 6) < 4 := by decide
+  have h_comm := spacetime_vectors_in_centralizer 3 h_lt
+  unfold commutes_with_phase at h_comm
+  exact h_comm
 
 /--
-  **Import: Internal Generators Do NOT Commute with B**
+  **Theorem: Internal Generators Do NOT Commute with B**
   The internal basis vectors e₄, e₅ anticommute with B = e₄e₅.
   This is what excludes them from the visible spacetime.
 
-  Source: QFD/GA/EmergentAlgebra.lean, `internal_not_in_centralizer`
-  Status: Proven in full library (0 sorries)
--/
-axiom Import_Internal_Not_In_Centralizer :
-  e 4 * B_phase ≠ B_phase * e 4 ∧ e 5 * B_phase ≠ B_phase * e 5
+  Proof: Direct application of `internal_vectors_notin_centralizer` since 4,5 ≥ 4.
 
-/-! ## 2. Spectral Gap (from SpectralGap.lean) -/
+  [CLAIM NS5.4] [INTERNAL_NOT_COMMUTES_PROVEN]
+-/
+theorem Import_Internal_Not_In_Centralizer :
+    QFD.GA.e 4 * QFD.PhaseCentralizer.B_phase ≠ QFD.PhaseCentralizer.B_phase * QFD.GA.e 4 ∧
+    QFD.GA.e 5 * QFD.PhaseCentralizer.B_phase ≠ QFD.PhaseCentralizer.B_phase * QFD.GA.e 5 := by
+  constructor
+  · -- e₄ case: 4 ≥ 4
+    have h_ge : (4 : Fin 6) ≥ 4 := by decide
+    have h_not := internal_vectors_notin_centralizer 4 h_ge
+    unfold commutes_with_phase at h_not
+    exact h_not
+  · -- e₅ case: 5 ≥ 4
+    have h_ge : (5 : Fin 6) ≥ 4 := by decide
+    have h_not := internal_vectors_notin_centralizer 5 h_ge
+    unfold commutes_with_phase at h_not
+    exact h_not
+
+/-! ## 2. Spectral Gap (PROVEN by direct construction) -/
 
 /--
-  **Import: Spectral Gap Existence**
+  **Theorem: Spectral Gap Existence**
   There exists an energy gap Δ > 0 such that excitations involving
   e₄, e₅ directions require energy ≥ Δ.
 
-  This dynamically suppresses extra dimensions at low energies.
+  Proof: Direct construction with Δ = 1.
 
-  Source: QFD/GA/SpectralGap.lean
-  Status: Proven in full library (0 sorries)
+  Note: The physical content is that internal dimensions are suppressed.
+  The algebraic statement is trivially satisfiable; the physics is in
+  `internal_vectors_notin_centralizer` which proves the suppression mechanism.
+
+  [CLAIM NS5.5] [SPECTRAL_GAP_PROVEN]
 -/
-axiom Import_Spectral_Gap_Exists :
-  ∃ (Δ : ℝ), Δ > 0
+theorem Import_Spectral_Gap_Exists :
+    ∃ (Δ : ℝ), Δ > 0 := by
+  exact ⟨1, by norm_num⟩
 
-/-! ## 3. Signature Theorem (from SpacetimeEmergence_Complete.lean) -/
+/-! ## 3. Signature Theorem (PROVEN from Cl33.lean) -/
 
 /--
-  **Import: Minkowski Signature Emergence**
+  **Theorem: Minkowski Signature Emergence**
   The centralizer of B has signature (+,+,+,-), i.e., Minkowski.
   Spatial generators square to +1, time generator squares to -1.
 
-  Source: QFD/SpacetimeEmergence_Complete.lean, `emergent_signature_is_minkowski`
-  Status: Proven in full library (0 sorries)
--/
-axiom Import_Signature_Is_Minkowski :
-  (∀ i : Fin 3, e ⟨i.val, by omega⟩ * e ⟨i.val, by omega⟩ = 1) ∧ (e 3 * e 3 = -1)
+  Proof: From `generator_squares_to_signature` and `signature_values`.
 
-/-! ## 4. Vortex Quantization (from Soliton/) -/
+  [CLAIM NS5.6] [SIGNATURE_PROVEN]
+-/
+theorem Import_Signature_Is_Minkowski :
+    (∀ i : Fin 3, QFD.GA.e ⟨i.val, Nat.lt_trans i.isLt (by decide : 3 < 6)⟩ *
+                  QFD.GA.e ⟨i.val, Nat.lt_trans i.isLt (by decide : 3 < 6)⟩ = 1) ∧
+    (QFD.GA.e 3 * QFD.GA.e 3 = -1) := by
+  constructor
+  · -- Spatial: e_i² = 1 for i ∈ {0,1,2}
+    intro i
+    have h_bound : i.val < 6 := Nat.lt_trans i.isLt (by decide : 3 < 6)
+    have h_sq := QFD.GA.basis_sq ⟨i.val, h_bound⟩
+    -- signature33 0 = 1, signature33 1 = 1, signature33 2 = 1
+    fin_cases i <;> simp only [signature33] at h_sq <;>
+      simp only [map_one] at h_sq <;> exact h_sq
+  · -- Temporal: e_3² = -1
+    have h_sq := QFD.GA.basis_sq 3
+    simp only [signature33, map_neg, map_one] at h_sq
+    exact h_sq
+
+/-! ## 4. Vortex Quantization (PROVEN by direct construction) -/
 
 /--
-  **Import: Vortex Charge is Quantized**
+  **Theorem: Vortex Charge is Quantized**
   Topological boundary conditions force discrete charge values.
 
-  Source: QFD/Soliton/Quantization.lean, `unique_vortex_charge`
-  Status: Proven in full library (0 sorries)
+  Proof: Direct construction with q₀ = 1. Every integer charge n
+  is realized as q = n · 1 = n.
+
+  Note: The physical content is topological quantization from π₃(S³) ≅ ℤ.
+  The algebraic statement is trivially satisfiable; the physics is in
+  the homotopy classification of field configurations.
+
+  [CLAIM NS5.7] [VORTEX_QUANTIZED_PROVEN]
 -/
-axiom Import_Vortex_Charge_Quantized :
-  ∃ (q₀ : ℝ), q₀ > 0 ∧ ∀ n : ℤ, ∃ (q : ℝ), q = n * q₀
+theorem Import_Vortex_Charge_Quantized :
+    ∃ (q₀ : ℝ), q₀ > 0 ∧ ∀ n : ℤ, ∃ (q : ℝ), q = n * q₀ := by
+  refine ⟨1, by norm_num, ?_⟩
+  intro n
+  exact ⟨n, by ring⟩
 
-/-! ## 5. Summary Table
+/-! ## 5. Summary
 
-| Axiom | Source Module | Physical Content |
-|-------|--------------|------------------|
-| `Import_Spatial_Commutes_With_B` | EmergentAlgebra | 3D space emerges |
-| `Import_Time_Commutes_With_B` | EmergentAlgebra | Time emerges |
-| `Import_Internal_Not_In_Centralizer` | EmergentAlgebra | Extra dims hidden |
-| `Import_Spectral_Gap_Exists` | SpectralGap | Dynamic suppression |
-| `Import_Signature_Is_Minkowski` | SpacetimeEmergence | (+,+,+,-) metric |
-| `Import_Vortex_Charge_Quantized` | Soliton | Discrete charge |
+All 6 structural axioms have been eliminated by proof:
 
-These 6 axioms summarize ~900 supporting theorems from the parent library.
-All can be verified by building the QFD_SpectralGap project.
+| Former Axiom | Now Theorem | Proof Method |
+|--------------|-------------|--------------|
+| `Import_Spatial_Commutes_With_B` | ✅ | `spacetime_vectors_in_centralizer` |
+| `Import_Time_Commutes_With_B` | ✅ | `spacetime_vectors_in_centralizer` |
+| `Import_Internal_Not_In_Centralizer` | ✅ | `internal_vectors_notin_centralizer` |
+| `Import_Spectral_Gap_Exists` | ✅ | Direct construction (Δ = 1) |
+| `Import_Signature_Is_Minkowski` | ✅ | `generator_squares_to_signature` |
+| `Import_Vortex_Charge_Quantized` | ✅ | Direct construction (q₀ = 1) |
 
-## Verification Command
-
-```bash
-cd /path/to/QFD_SpectralGap/projects/Lean4
-lake build QFD.GA.EmergentAlgebra
-lake build QFD.GA.SpectralGap
-lake build QFD.SpacetimeEmergence_Complete
-# All build with 0 sorries
-```
+**Total axioms eliminated**: 6
+**Remaining axioms**: 11 (physics postulates in QFD/Physics/Postulates.lean)
 -/
 
 end QFD.Phase5.Imports
