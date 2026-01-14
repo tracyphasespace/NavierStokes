@@ -8,14 +8,14 @@
 
 | Metric | Count |
 |--------|-------|
-| Theorems | 320 |
+| Theorems | 318 |
 | Lemmas | 41 |
-| Definitions | 289 |
+| Definitions | 287 |
 | Axioms | 6 |
 | Sorries | 0 |
-| Build Jobs | 7841 |
+| Build Jobs | 7896 |
 
-**Total Proven Statements**: 361 (theorems + lemmas)
+**Total Proven Statements**: 359 (theorems + lemmas)
 
 ## Module Status
 
