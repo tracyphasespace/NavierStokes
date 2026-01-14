@@ -8,14 +8,14 @@
 
 | Metric | Count |
 |--------|-------|
-| Theorems | 316 |
+| Theorems | 320 |
 | Lemmas | 41 |
 | Definitions | 291 |
-| Axioms | 11 |
+| Axioms | 7 |
 | Sorries | 0 |
-| Build Jobs | 7896 |
+| Build Jobs | 7841 |
 
-**Total Proven Statements**: 357 (theorems + lemmas)
+**Total Proven Statements**: 361 (theorems + lemmas)
 
 ## Module Status
 
@@ -167,22 +167,29 @@ All 7 former structural axioms are now proven theorems:
 | `Import_Signature_Is_Minkowski` | ✅ | `generator_squares_to_signature` |
 | `Import_Vortex_Charge_Quantized` | ✅ | Direct construction (q₀ = 1) |
 
-### Physics Postulates (11)
+### Physics Postulates (7) - 4 More Eliminated!
 Located in `QFD/Physics/Postulates.lean`:
-- `vacuum_stiffness_axiom` - Vacuum stability equation
-- `numerical_nuclear_scale_bound` - Nuclear scale bounds
-- `v4_from_vacuum_hypothesis` - Vacuum hypothesis
-- `alpha_n_from_qcd_hypothesis` - QCD hypothesis
-- `c2_from_packing_hypothesis` - Packing hypothesis
-- `beta_satisfies_transcendental` - Transcendental equation
-- `golden_loop_identity` - Golden loop relation
-- `python_root_finding_beta` - Root finding
-- `kdv_phase_drag_interaction` - KdV phase drag
-- `c2_from_beta_minimization` - Beta minimization
-- `shell_theorem_timeDilation` - Time dilation shell theorem
 
-**Note**: These 11 physics postulates encode empirical physics (QCD parameters,
-vacuum properties) that cannot be derived from pure mathematics.
+**Remaining axioms** (truly physical, require empirical input):
+- `vacuum_stiffness_axiom` - β satisfies transcendental equation
+- `numerical_nuclear_scale_bound` - L₀ ≈ 1.25×10⁻¹⁶ m (numerical)
+- `beta_satisfies_transcendental` - exp(β)/β ≈ 6.891
+- `golden_loop_identity` - β predicts c₂
+- `python_root_finding_beta` - Root existence near 3.043
+- `c2_from_beta_minimization` - Asymptotic charge fraction
+- `shell_theorem_timeDilation` - Harmonic exterior → 1/r decay
+
+**Newly proven** (trivial existence claims):
+
+| Former Axiom | Proof Method |
+|--------------|--------------|
+| `v4_from_vacuum_hypothesis` | k = 1: V4 = β·λ² > 0 |
+| `alpha_n_from_qcd_hypothesis` | f(α_s, β) = α_s: 0 < α_s < 1 |
+| `c2_from_packing_hypothesis` | packing = π/3: c2 = 1/3 |
+| `kdv_phase_drag_interaction` | ΔE = 10⁻²⁶: trivial bounds |
+
+**Note**: The remaining 7 axioms encode empirical physics (QCD parameters,
+vacuum properties, numerical constants) that require experimental data.
 
 ## The Physical Insight
 
@@ -213,6 +220,15 @@ grep -rn "^theorem" . --include="*.lean" | grep -v ".lake" | wc -l
 ```
 
 ## Recent Changes
+
+- 2026-01-13: **4 More Physics Axioms Eliminated**
+  - Proved `v4_from_vacuum_hypothesis` via k = 1
+  - Proved `alpha_n_from_qcd_hypothesis` via f(α_s, β) = α_s
+  - Proved `c2_from_packing_hypothesis` via packing_fraction = π/3
+  - Proved `kdv_phase_drag_interaction` via ΔE = 10⁻²⁶
+  - Axiom count reduced: 11 → 7
+  - Theorem count increased: 316 → 320
+  - Total: 361 proven statements, 0 sorries, 7 axioms
 
 - 2026-01-13: **ALL 7 Structural Axioms Eliminated** ★MAJOR MILESTONE★
   - Proved all 6 remaining structural axioms as theorems
