@@ -140,12 +140,23 @@ grep -rn "sorry" Lean/ --include="*.lean" | wc -l
 - **Use `two_smul`** - For proving x + x = 2 • x
 - **Use `add_eq_zero_iff_eq_neg`** - For a + b = 0 ⟹ a = -b
 
+### Check for Active Builds Before Starting
+**ALWAYS** check if another build is running before starting `lake build`:
+```bash
+# Check for active lake build process
+pgrep -f "lake build" || echo "No build running"
+
+# Alternative: check for .lake lock
+ls .lake/*.lock 2>/dev/null || echo "No lock files"
+```
+If a build is already in progress, **wait for it to complete** before starting another.
+
 ### Avoid Parallel Builds
 ```bash
 # ✅ CORRECT
 lake build Module1 && lake build Module2
 
-# ❌ WRONG (OOM crash)
+# ❌ WRONG (OOM crash or conflicts)
 lake build Module1 & lake build Module2 &
 ```
 
