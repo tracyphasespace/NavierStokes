@@ -233,6 +233,13 @@ structure WeightWithGradient extends SmoothWeight where
   /-- Gradient norm is non-negative -/
   grad_nonneg : ∀ p, grad_norm_sq p ≥ 0
 
+/-- The uniform (constant) weight extended with gradient info.
+    Since the weight is constant, grad_norm_sq = 0 everywhere. -/
+def uniformWeightWithGradient : WeightWithGradient where
+  toSmoothWeight := uniformWeight
+  grad_norm_sq := fun _ => 0
+  grad_nonneg := fun _ => le_refl 0
+
 /-- Volume of the 3-torus -/
 def torus_volume : ℝ := (2 * Real.pi) ^ 3
 
@@ -270,6 +277,21 @@ axiom gradient_integral_zero_of_constant [MeasureSpace Torus3] (ρ : WeightWithG
 /-- Viscosity from weight gradient -/
 noncomputable def viscosity_from_weight [MeasureSpace Torus3] (ρ : WeightWithGradient) : ℝ :=
   (1 / torus_volume) * gradient_integral ρ
+
+/-- CONCRETE EXAMPLE: Uniform weight has zero gradient integral.
+    This is provable because uniformWeightWithGradient has grad_norm_sq = 0. -/
+theorem uniformWeight_gradient_integral_zero [MeasureSpace Torus3] :
+    gradient_integral uniformWeightWithGradient = 0 := by
+  unfold gradient_integral uniformWeightWithGradient
+  simp only [Pi.zero_apply]
+  exact MeasureTheory.integral_zero Torus3 ℝ
+
+/-- CONCRETE EXAMPLE: Uniform weight gives zero viscosity. -/
+theorem uniformWeight_viscosity_zero [MeasureSpace Torus3] :
+    viscosity_from_weight uniformWeightWithGradient = 0 := by
+  unfold viscosity_from_weight
+  rw [uniformWeight_gradient_integral_zero]
+  simp
 
 /-- Viscosity is non-negative (gradient squared integral is non-negative) -/
 theorem viscosity_from_weight_nonneg [MeasureSpace Torus3] (ρ : WeightWithGradient) :
