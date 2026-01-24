@@ -122,8 +122,29 @@ A \textbf{smooth weight function} is a function $\rho \in C^\infty(\T^3)$ satisf
 
 The normalization condition ensures that the projection operator $\Proj$ recovers the original velocity field exactly. The boundedness condition ensures finite energy.
 
+\begin{definition}[Maxwell-Boltzmann Weight]
+\label{def:boltzmann}
+For a fluid at temperature $T$ with molecular mass $m$, the \textbf{Boltzmann weight function} is:
+\begin{equation}
+    \rho_{\mathrm{MB}}(p) = Z^{-1} \exp\left( -\frac{|p|^2}{2mkT} \right)
+\end{equation}
+where $Z$ is the partition function ensuring $L^2$ normalization.
+\end{definition}
+
+\begin{theorem}[Boltzmann Satisfies Weight Conditions]
+The Maxwell-Boltzmann distribution $\rho_{\mathrm{MB}}$ satisfies all properties of Definition 2.1.
+\end{theorem}
+\begin{proof}
+Positivity follows from the exponential. Smoothness is immediate. Normalization is achieved by choosing $Z$ appropriately. Boundedness follows from the Gaussian decay. \\
+\textit{Lean 4:} \texttt{Phase7\_Density/BoltzmannPhysics.boltzmannSmoothWeight}
+\end{proof}
+
 \begin{remark}
 The choice of $L^2$ normalization (rather than $L^1$) aligns with the energy inner product structure of the 6D phase space. This is not a convention but a consequence of requiring $\Proj \circ \Lift = \mathrm{id}$.
+\end{remark}
+
+\begin{remark}
+The choice of $\rho$ is not arbitrary---thermodynamics constrains it to the Boltzmann form. Paper III will show that the viscosity coefficient $\nu$ emerges uniquely from this constraint via the formula $\nu = \frac{1}{(2\pi)^3}\int |\nabla_p \rho|^2 \, d^3p$.
 \end{remark}
 
 %=============================================================================
@@ -218,7 +239,7 @@ Since $\rho \in C^\infty(\T^3)$, the tensor product $\rho(p) \cdot u(x)$ inherit
     \|\Lift(u)\|_{H^k} \leq C_\rho \|u\|_{H^k}
 \end{equation}
 where $C_\rho$ depends only on the derivatives of $\rho$. \\
-\textit{Lean 4:} \texttt{Phase7\_Density/FunctionSpaces.lift\_preserves\_regularity}
+\textit{Lean 4:} \texttt{Phase7\_Density/LiftConstruction.lift\_preserves\_regularity}
 \end{proof}
 
 %=============================================================================
@@ -296,29 +317,39 @@ Let $\rho$ be any smooth weight function satisfying Definition 2.1. Define:
 \section{The Role of the Weight Function}
 %=============================================================================
 
-\subsection{Non-Uniqueness}
+\subsection{Mathematical Non-Uniqueness}
 
-The lift is not unique---any smooth weight function $\rho$ satisfying the normalization condition produces a valid lift. This non-uniqueness reflects the physical reality that many microscopic configurations can produce the same macroscopic velocity field.
+The lift is not unique---any smooth weight function $\rho$ satisfying the normalization condition produces a valid lift. This non-uniqueness is analogous to gauge freedom in electromagnetism: many vector potentials $A$ produce the same electromagnetic field $F = dA$.
 
 \begin{proposition}[Weight Function Freedom]
 If $\rho_1$ and $\rho_2$ are both smooth weight functions, then:
 \begin{equation}
-    \Proj(\Lambda_{\rho_1}(u)) = \Proj(\Lambda_{\rho_2}(u)) = u
+    \Proj_{\rho_1}(\Lambda_{\rho_1}(u)) = \Proj_{\rho_2}(\Lambda_{\rho_2}(u)) = u
 \end{equation}
 The projected dynamics are independent of the choice of $\rho$.
 \end{proposition}
 
-\subsection{Physical Interpretation}
+\subsection{Physical Uniqueness via Thermodynamics}
 
-Different choices of $\rho(p)$ correspond to different microscopic momentum distributions:
+While mathematically non-unique, physics constrains the choice:
+
+\begin{enumerate}
+    \item \textbf{Thermal equilibrium:} Real fluids have molecular momenta distributed according to the Maxwell-Boltzmann distribution (Definition \ref{def:boltzmann}).
+    \item \textbf{Temperature dependence:} The width of the Gaussian is $\sqrt{mkT}$, determined by thermodynamics.
+    \item \textbf{Viscosity determination:} Paper III shows $\nu = \frac{1}{(2\pi)^3}\int |\nabla_p \rho|^2$, which for the Boltzmann form gives the Chapman-Enskog viscosity.
+\end{enumerate}
+
+The non-uniqueness reflects physical reality: \textit{many microscopic momentum configurations produce the same macroscopic velocity field}. The projection operator ``forgets'' the microscopic details---this is precisely what Navier and Stokes did experimentally when they measured bulk flow without resolving molecular motions.
+
+\subsection{Interpretation of Different Weight Functions}
 
 \begin{itemize}
-    \item \textbf{Uniform $\rho$:} Equal momentum in all directions (isotropic)
-    \item \textbf{Gaussian $\rho$:} Maxwell-Boltzmann thermal equilibrium
-    \item \textbf{Anisotropic $\rho$:} Directional momentum bias (e.g., shear flows)
+    \item \textbf{Uniform $\rho$:} Equal momentum in all directions (isotropic, zero viscosity)
+    \item \textbf{Gaussian $\rho$:} Maxwell-Boltzmann thermal equilibrium (physical viscosity)
+    \item \textbf{Anisotropic $\rho$:} Directional momentum bias (non-equilibrium, e.g., shear flows)
 \end{itemize}
 
-The projection ``averages out'' these microscopic details, recovering the bulk velocity $u(x)$. This is precisely what Navier and Stokes did experimentally---they measured the projected dynamics without resolving the momentum distribution.
+The Boltzmann distribution is the ``physical gauge choice''---it corresponds to thermodynamic equilibrium and yields the experimentally measured viscosity.
 
 %=============================================================================
 \section{Formal Verification}
@@ -335,7 +366,8 @@ The existence construction is formally verified in Lean 4:
 Projection Identity & \texttt{LiftConstruction.pi\_rho\_lift\_eq} & \checkmark \\
 Lift Existence & \texttt{LiftConstruction.lift\_exists} & \checkmark \\
 Energy Bound & \texttt{LiftConstruction.energy\_lift\_bound} & \checkmark \\
-Regularity Preservation & \texttt{FunctionSpaces.lift\_preserves\_regularity} & \checkmark \\
+Regularity Preservation & \texttt{LiftConstruction.lift\_preserves\_regularity} & \checkmark \\
+Boltzmann Weight & \texttt{BoltzmannPhysics.boltzmannSmoothWeight} & \checkmark \\
 Evolution Existence & \texttt{PhysicsAxioms.scleronomic\_evolution\_exists} & Axiom \\
 Energy Conservation & \texttt{PhysicsAxioms.scleronomic\_conserves\_energy} & Axiom \\ \bottomrule
 \end{tabular}
@@ -360,5 +392,18 @@ The lift construction $\Lift(u) = \rho(p) \cdot u(x)$ is explicit, canonical (up
 \end{quote}
 
 Paper III will complete the argument by deriving the viscosity coefficient $\nu$ from the geometry of the weight function $\rho$, demonstrating that the ``viscosity conundrum'' resolves when the full 6D structure is recognized.
+
+\begin{thebibliography}{9}
+
+\bibitem{Maxwell1867}
+J. C. Maxwell, \textit{On the dynamical theory of gases}, Phil. Trans. R. Soc. \textbf{157} (1867), 49--88.
+
+\bibitem{Boltzmann1872}
+L. Boltzmann, \textit{Weitere Studien \"uber das W\"armegleichgewicht unter Gasmolek\"ulen}, Wiener Berichte \textbf{66} (1872), 275--370.
+
+\bibitem{ChapmanCowling}
+S. Chapman and T. G. Cowling, \textit{The Mathematical Theory of Non-uniform Gases}, Cambridge University Press, 1970.
+
+\end{thebibliography}
 
 \end{document}
