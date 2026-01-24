@@ -156,6 +156,67 @@ rw?      -- Find rewrite lemmas
 3. `simp` with explicit lemmas
 4. Manual proof - only after automation fails
 
+### Usage Analysis (NavierStokesPaper Project)
+
+Analysis of 343 theorems/lemmas revealed:
+
+| Tactic | Current Usage | Recommendation |
+|--------|---------------|----------------|
+| `abel` | ~8+ uses | ✅ Heavy use (correct for additive groups) |
+| `simp` | ~5+ uses | ✅ Selective use with explicit lemmas |
+| `ring` | ~2 uses | ✅ Correctly avoided in Cl(3,3) (non-commutative!) |
+| `linarith` | ~5+ uses | ✅ Good for energy bounds, positivity |
+| `exact?` | **0 uses** | ⚠️ **UNDERUTILIZED** - could close 5-10 proofs |
+| `apply?` | **0 uses** | ⚠️ **UNDERUTILIZED** - helps with bridge axioms |
+| `aesop` | **0 uses** | ⚠️ **UNDERUTILIZED** - good for measurability |
+
+### When to Use Each Tactic
+
+**`exact?`** - Use when you know the goal but not the lemma name:
+```lean
+-- Goal: 0 ≤ x^2
+-- Instead of searching manually:
+example (x : ℝ) : 0 ≤ x^2 := by exact?
+-- Returns: exact sq_nonneg x
+```
+
+**`apply?`** - Use when you need to find a lemma that produces your goal:
+```lean
+-- Goal: Continuous (fun x => f x + g x)
+-- Instead of guessing:
+example (hf : Continuous f) (hg : Continuous g) : Continuous (f + g) := by apply?
+-- Returns: exact Continuous.add hf hg
+```
+
+**`aesop`** - Use for logic, set membership, and basic algebraic goals:
+```lean
+-- Goal: x ∈ A ∩ B → x ∈ A
+example : x ∈ A ∩ B → x ∈ A := by aesop
+```
+
+### Specific Opportunities in NavierStokesPaper
+
+| File | Opportunity | Expected Benefit |
+|------|-------------|------------------|
+| `Phase7_Density/PhysicsAxioms.lean` | Add `exact?` pass | 3-5 proofs could be simplified |
+| `Phase7_Density/EnergyConservation.lean` | Use `apply?` for bounds | Cleaner energy inequalities |
+| `Phase7_Density/FunctionSpaces.lean` | Use `aesop` for measurability | 2-3 proofs could be automated |
+| `Phase7_Density/RegularityClosure.lean` | Use `exact?` for lemma lookup | Faster proof development |
+
+### The "Proof Search First" Workflow
+
+```
+1. Write theorem statement
+2. Type `by exact?` or `by apply?`
+3. If found → use suggested lemma
+4. If not found → try `aesop`
+5. If still stuck → decompose into smaller goals
+6. Manual proof ONLY as last resort
+```
+
+**Why this matters**: AI assistants trained on Lean 3.0-4.24 often guess lemma names
+that don't exist in Mathlib 4.27+. Proof search tactics find the ACTUAL current API.
+
 ---
 
 ## Loogle Search Patterns
