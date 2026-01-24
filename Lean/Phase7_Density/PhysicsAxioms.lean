@@ -382,9 +382,33 @@ axiom our_formula_matches_CE (m : MolecularMass) (T : Temperature) (τ : Relaxat
     viscosity_from_weight (boltzmannWeightWithGradient m T) =
     chapmanEnskogViscosity m T τ
 
+/-- Chapman-Enskog viscosity is positive -/
+-- CONVERTED FROM AXIOM (first conjunct): follows from positivity of components
+theorem chapmanEnskogViscosity_pos (m : MolecularMass) (T : Temperature) (τ : RelaxationTime) :
+    chapmanEnskogViscosity m T τ > 0 := by
+  unfold chapmanEnskogViscosity meanFreePath thermalVelocity thermalEnergy k_B
+  -- (1/3) * (√(1*T/m) * τ) * √(1*T/m) > 0
+  have h_thermal : (0 : ℝ) < 1 * T.temp / m.mass := by
+    apply div_pos
+    · simp only [one_mul]; exact T.pos
+    · exact m.pos
+  apply mul_pos
+  apply mul_pos
+  · norm_num  -- 1/3 > 0
+  · apply mul_pos
+    · exact Real.sqrt_pos.mpr h_thermal
+    · exact τ.pos
+  · exact Real.sqrt_pos.mpr h_thermal
+
+/-- Viscosity upper bound (physical constraint on parameters) -/
+axiom viscosity_physical_upper_bound (m : MolecularMass) (T : Temperature) (τ : RelaxationTime) :
+    chapmanEnskogViscosity m T τ < 1
+
 /-- Viscosity is in physical range -/
-axiom viscosity_physical_range (m : MolecularMass) (T : Temperature) (τ : RelaxationTime) :
-    chapmanEnskogViscosity m T τ > 0 ∧ chapmanEnskogViscosity m T τ < 1
+-- SPLIT: positivity now proven, upper bound remains axiom
+theorem viscosity_physical_range (m : MolecularMass) (T : Temperature) (τ : RelaxationTime) :
+    chapmanEnskogViscosity m T τ > 0 ∧ chapmanEnskogViscosity m T τ < 1 :=
+  ⟨chapmanEnskogViscosity_pos m T τ, viscosity_physical_upper_bound m T τ⟩
 
 -- ==============================================================================
 -- 10. EXCHANGE IDENTITY AXIOMS
