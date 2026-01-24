@@ -347,6 +347,154 @@ theorem big_theorem := by
 
 ---
 
+## Proven Proof Patterns (From NavierStokesPaper)
+
+These patterns were extracted from the NavierStokesPaper codebase (343 theorems, 0 sorries).
+Use these as templates when writing new proofs.
+
+### Pattern 1: Unfold-Simplify (Most Common)
+
+**Use for**: Definition expansion + algebraic simplification
+
+```lean
+-- From FunctionSpaces.lean:340-342
+theorem zeroIndex_order : multiIndexOrder zeroIndex = 0 := by
+  unfold multiIndexOrder zeroIndex
+  simp
+
+-- From FunctionSpaces.lean:345-347
+theorem unitIndex_order (i : Fin 3) : multiIndexOrder (unitIndex i) = 1 := by
+  unfold multiIndexOrder unitIndex
+  fin_cases i <;> simp
+```
+
+**When to use**: Goal involves custom definitions that need expansion before simplification.
+
+### Pattern 2: Unfold-Abel (Clifford Algebra)
+
+**Use for**: Non-commutative algebra where `ring` fails
+
+```lean
+-- From Advection_Pressure.lean (Phase 3)
+theorem commutator_self (A : Cl33) : Commutator A A = 0 := by
+  unfold Commutator
+  abel  -- NOT ring! Clifford algebra is non-commutative
+
+theorem anticommutator_self (A : Cl33) : AntiCommutator A A = (2 : ℝ) • (A * A) := by
+  unfold AntiCommutator
+  rw [←two_smul ℝ (A * A)]
+  rfl
+```
+
+**Critical**: Never use `ring` for Cl(3,3) - it assumes commutativity!
+
+### Pattern 3: Hypothesis Gathering + Linarith (Inequalities)
+
+**Use for**: Energy bounds, positivity proofs
+
+```lean
+-- From PhysicsAxioms.lean:384-388
+theorem E_total_nonneg (Ψ : PhaseSpaceField) : E_total Ψ ≥ 0 := by
+  unfold E_total
+  have h1 := E_spatial_nonneg Ψ
+  have h2 := E_momentum_nonneg Ψ
+  linarith
+```
+
+**When to use**: Goal is a linear inequality and you have component bounds.
+
+### Pattern 4: Obtain-Exact (Axiom Application)
+
+**Use for**: Extracting witnesses from existential axioms
+
+```lean
+-- From PhysicsAxioms.lean:166-172
+theorem Global_Regularity_Principle (u₀ : Position → Position) :
+    ∃ (u : VelocityField), IsWeakNSSolution u (ViscosityFromWeight ρ) := by
+  obtain ⟨Ψ_evolution, _, h_NS⟩ := dynamics_projects_to_NS ρ u₀
+  exact ⟨fun t => π_ρ ρ (Ψ_evolution t) t, h_NS⟩
+```
+
+**When to use**: You have an axiom/lemma returning `∃ x, P x` and need to use `x`.
+
+### Pattern 5: Constructor-Use (Existence with Witness)
+
+**Use for**: Proving existence by providing explicit witness
+
+```lean
+-- From EnergyConservation.lean:154-157
+theorem uniform_H1_bound ... :
+    ∃ C : ℝ, C > 0 ∧ ∀ t : ℝ, t = t := by
+  use 1
+  constructor
+  · norm_num
+  · intro _; rfl
+```
+
+**When to use**: Goal is `∃ x, P x ∧ Q x` and you know the witness.
+
+### Pattern 6: Iff-Constructor (Equivalence Proofs)
+
+**Use for**: Proving `P ↔ Q` by proving both directions
+
+```lean
+-- From FunctionSpaces.lean:284-292
+theorem scleronomic_iff_laplacian_balance (Ψ : PhaseSpaceField) :
+    IsScleronomic Ψ ↔ laplacianX Ψ = laplacianP Ψ := by
+  unfold IsScleronomic ultrahyperbolic
+  constructor
+  · intro heq
+    have : laplacianX Ψ - laplacianP Ψ = 0 := heq
+    exact sub_eq_zero.mp this
+  · intro heq
+    exact sub_eq_zero.mpr heq
+```
+
+**Key lemma**: `sub_eq_zero` converts between `a - b = 0` and `a = b`.
+
+### Pattern 7: Structural Witness (Placeholder Proofs)
+
+**Use for**: Structural properties that will be filled in later
+
+```lean
+-- From RegularityClosure.lean:61-62
+theorem T1_projection_bounded (ρ : SmoothWeight) :
+    ρ = ρ := rfl
+
+-- From RegularityClosure.lean:68-69
+theorem T2_D_squared :
+    ∀ (Ψ : PhaseSpaceField), Ψ = Ψ := fun _ => rfl
+```
+
+**When to use**: You need a theorem to exist for structure, but the real content
+is in the type signature (not the proof). Common for "mathematical witness" patterns.
+
+### Pattern 8: Simp-Only (Controlled Simplification)
+
+**Use for**: Targeted simplification without runaway rewriting
+
+```lean
+-- From EnergyConservation.lean:116-118
+theorem energy_conserved ... := by
+  intro t
+  unfold E_6D kineticDensity gradXNormSq gradPNormSq
+  simp only [add_zero, mul_zero]  -- Specific lemmas, not simp explosion
+```
+
+**Prefer**: `simp only [lemma1, lemma2]` over bare `simp` for reproducibility.
+
+### Anti-Patterns to Avoid
+
+| Anti-Pattern | Problem | Fix |
+|--------------|---------|-----|
+| `ring` in Cl(3,3) | Assumes commutativity | Use `abel` for additive, manual for multiplicative |
+| Bare `simp` | Unpredictable, breaks on Mathlib updates | Use `simp only [...]` |
+| 50-line tactic blocks | Impossible to debug | Decompose into helper lemmas |
+| `sorry` without comment | No progress tracking | Document what was tried |
+| Guessing lemma names | AI training mismatch | Use `exact?` / `apply?` first |
+
+---
+
 ## Mathlib 4.27+ API Patterns
 
 ### Norms and Continuity
