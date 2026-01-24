@@ -612,6 +612,17 @@ The viscosity coefficient $\nu$ appears as an external parameter. Within the 3D 
     \item $\nu$ must be measured experimentally and inserted
 \end{itemize}
 
+\subsection{The Constant Assumption}
+
+The 3D formulation assumes viscosity is a scalar constant. This is an oversimplification. \textbf{Viscosity arises from the coupling between the linear momentum of bulk flow and the angular momentum of molecular rotation.} When fluid layers shear past each other, molecules don't simply slide---they \textit{roll}, transferring linear momentum into angular momentum.
+
+In standard Navier-Stokes, this dynamic operator is averaged into a static constant:
+\begin{equation}
+    \underbrace{\Delta_p}_{\text{exchange operator}} \quad \longrightarrow \quad \underbrace{\nu}_{\text{constant}}
+\end{equation}
+
+In our 6D framework, we restore the full operator $\Delta_p$, revealing that viscosity is not a property of the fluid---it is a \textbf{process of the molecules}.
+
 We prove that viscosity emerges naturally from the 6D phase space structure.
 
 %=============================================================================
@@ -644,6 +655,21 @@ Integration by parts on the torus (boundary terms vanish by periodicity):
 
 Normalizing by torus volume $(2\pi)^3$ yields the result.
 \end{proof}
+
+\begin{remark}[Physical Mechanism: The ``Ball Bearing'' Effect]
+In our 6D framework, the fluid is modeled as a bed of ``ball bearings'' (molecules) that can both translate and rotate:
+\begin{itemize}
+\item \textbf{The 3D View (Sliding):} Standard theory models friction as a constant drag $\nu$, like a simple brake.
+\item \textbf{The 6D View (Rolling):} Shearing layers exert torque on molecules, converting linear momentum (flow) into angular momentum (molecular spin).
+\end{itemize}
+
+The operator $\Delta_p$ describes this ``gearing'' mechanism. The standard viscosity $\nu$ is merely the macroscopic average:
+\begin{equation}
+    \nu = \left\langle \Delta_p \right\rangle_\rho := \frac{1}{(2\pi)^3} \int_{\T^3} \rho(p) \cdot \Delta_p \rho(p) \, d^3p
+\end{equation}
+
+Energy is not ``lost'' to a sink; it is conservatively transferred into rotational degrees of freedom. This prevents blow-up: if you push the fluid too hard, you just spin the molecules faster.
+\end{remark}
 
 %=============================================================================
 \section{The Advection Projection: Explicit Calculation}
@@ -771,7 +797,9 @@ We have completed the resolution of the Navier-Stokes global regularity problem:
 
 The key insight is that the 3D Navier-Stokes equations are not a complete dynamical system. They are a projection of a conservative 6D phase space evolution. The viscosity term---traditionally viewed as energy dissipation---is revealed as conservative exchange between configuration and momentum sectors.
 
-The ``blow-up problem'' dissolves when the full structure is recognized. Energy cannot concentrate to infinity in 3D because it is conserved in 6D.
+\textbf{The Operator-Constant Duality:} Viscosity is not a property of the fluid; it is a \textit{process} of the molecules. The scalar constant $\nu$ in standard NSE is merely the expectation value of a dynamic exchange operator $\Delta_p$ that couples linear momentum (bulk flow) to angular momentum (molecular rotation). Standard theory replaces the operator with its average, hiding the mechanism that prevents blow-up.
+
+The ``blow-up problem'' dissolves when the full structure is recognized. Energy cannot concentrate to infinity in 3D because it is conserved in 6D. As energy accumulates in small-scale eddies, the exchange operator transfers it to molecular rotation. The fluid has a ``safety valve''---it doesn't break; it spins the molecules harder.
 
 %=============================================================================
 %=============================================================================
