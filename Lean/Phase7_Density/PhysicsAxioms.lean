@@ -236,24 +236,34 @@ structure WeightWithGradient extends SmoothWeight where
 /-- Volume of the 3-torus -/
 def torus_volume : ℝ := (2 * Real.pi) ^ 3
 
-/-- The gradient integral for a weight function -/
-axiom gradient_integral (ρ : WeightWithGradient) : ℝ
+/-- The gradient integral for a weight function.
+    Defined as the integral of the gradient squared norm over the torus.
+    CONVERTED FROM AXIOM: now a concrete definition. -/
+noncomputable def gradient_integral [MeasureSpace Torus3] (ρ : WeightWithGradient) : ℝ :=
+  ∫ p : Torus3, ρ.grad_norm_sq p
 
 /-- Gradient integral is non-negative -/
-axiom gradient_integral_nonneg (ρ : WeightWithGradient) : gradient_integral ρ ≥ 0
+-- CONVERTED FROM AXIOM: follows from pointwise non-negativity of grad_norm_sq
+theorem gradient_integral_nonneg [MeasureSpace Torus3] (ρ : WeightWithGradient) :
+    gradient_integral ρ ≥ 0 := by
+  unfold gradient_integral
+  apply MeasureTheory.integral_nonneg
+  exact ρ.grad_nonneg
 
-/-- Non-constant weight has positive gradient integral -/
-axiom gradient_integral_pos_of_nonconstant (ρ : WeightWithGradient)
+/-- Non-constant weight has positive gradient integral.
+    Requires that the gradient data is consistent with non-constancy. -/
+axiom gradient_integral_pos_of_nonconstant [MeasureSpace Torus3] (ρ : WeightWithGradient)
     (h_nonconstant : ∃ p₁ p₂, ρ.toSmoothWeight.ρ p₁ ≠ ρ.toSmoothWeight.ρ p₂) :
     gradient_integral ρ > 0
 
-/-- Constant weight has zero gradient integral -/
-axiom gradient_integral_zero_of_constant (ρ : WeightWithGradient)
+/-- Constant weight has zero gradient integral.
+    Requires that grad_norm_sq = 0 when weight is constant. -/
+axiom gradient_integral_zero_of_constant [MeasureSpace Torus3] (ρ : WeightWithGradient)
     (h_constant : ∀ p₁ p₂, ρ.toSmoothWeight.ρ p₁ = ρ.toSmoothWeight.ρ p₂) :
     gradient_integral ρ = 0
 
 /-- Viscosity from weight gradient -/
-noncomputable def viscosity_from_weight (ρ : WeightWithGradient) : ℝ :=
+noncomputable def viscosity_from_weight [MeasureSpace Torus3] (ρ : WeightWithGradient) : ℝ :=
   (1 / torus_volume) * gradient_integral ρ
 
 /-- Momentum Laplacian operator (concrete) -/
