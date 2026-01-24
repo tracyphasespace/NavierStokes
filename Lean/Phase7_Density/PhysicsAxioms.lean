@@ -236,6 +236,11 @@ structure WeightWithGradient extends SmoothWeight where
 /-- Volume of the 3-torus -/
 def torus_volume : ℝ := (2 * Real.pi) ^ 3
 
+/-- Torus volume is positive -/
+theorem torus_volume_pos : torus_volume > 0 := by
+  unfold torus_volume
+  positivity
+
 /-- The gradient integral for a weight function.
     Defined as the integral of the gradient squared norm over the torus.
     CONVERTED FROM AXIOM: now a concrete definition. -/
@@ -265,6 +270,35 @@ axiom gradient_integral_zero_of_constant [MeasureSpace Torus3] (ρ : WeightWithG
 /-- Viscosity from weight gradient -/
 noncomputable def viscosity_from_weight [MeasureSpace Torus3] (ρ : WeightWithGradient) : ℝ :=
   (1 / torus_volume) * gradient_integral ρ
+
+/-- Viscosity is non-negative (gradient squared integral is non-negative) -/
+theorem viscosity_from_weight_nonneg [MeasureSpace Torus3] (ρ : WeightWithGradient) :
+    viscosity_from_weight ρ ≥ 0 := by
+  unfold viscosity_from_weight
+  apply mul_nonneg
+  · apply div_nonneg
+    · norm_num
+    · linarith [torus_volume_pos]
+  · exact gradient_integral_nonneg ρ
+
+/-- For non-constant weight, viscosity is strictly positive -/
+theorem viscosity_from_weight_pos_of_nonconstant [MeasureSpace Torus3] (ρ : WeightWithGradient)
+    (h_nonconstant : ∃ p₁ p₂, ρ.toSmoothWeight.ρ p₁ ≠ ρ.toSmoothWeight.ρ p₂) :
+    viscosity_from_weight ρ > 0 := by
+  unfold viscosity_from_weight
+  apply mul_pos
+  · apply div_pos
+    · norm_num
+    · exact torus_volume_pos
+  · exact gradient_integral_pos_of_nonconstant ρ h_nonconstant
+
+/-- Constant weight gives zero viscosity -/
+theorem viscosity_from_weight_zero_of_constant [MeasureSpace Torus3] (ρ : WeightWithGradient)
+    (h_constant : ∀ p₁ p₂, ρ.toSmoothWeight.ρ p₁ = ρ.toSmoothWeight.ρ p₂) :
+    viscosity_from_weight ρ = 0 := by
+  unfold viscosity_from_weight
+  rw [gradient_integral_zero_of_constant ρ h_constant]
+  simp
 
 /-- Momentum Laplacian operator (concrete) -/
 def laplacian_p : QFD.Phase7.FunctionSpaces.PhaseSpaceField →
