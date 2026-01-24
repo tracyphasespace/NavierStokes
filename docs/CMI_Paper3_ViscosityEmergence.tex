@@ -675,6 +675,45 @@ The key insight is that the 3D Navier-Stokes equations are not a complete dynami
 
 The ``blow-up problem'' dissolves when the full structure is recognized. Energy cannot concentrate to infinity in 3D because it is conserved in 6D. As energy accumulates in small-scale eddies ($\Delta_x \Psi$ increases), the exchange operator transfers it to molecular rotation ($\Delta_p \Psi$ increases equally). The fluid has a ``safety valve''---it doesn't break; it spins the molecules harder. The singularity feared by analysts is impossible because the system has internal degrees of freedom to absorb the energy that a scalar constant cannot access.
 
+\subsection{The Mechanism of Regularity: A Technical Summary}
+
+We now provide a precise technical account of why blow-up is impossible.
+
+\textbf{The Traditional Picture:} In standard Navier-Stokes, the viscous term $\nu \Delta u$ acts as a \textit{sink}---energy leaves the velocity field and disappears into ``heat.'' The concern is that advective nonlinearity $(u \cdot \nabla)u$ can concentrate energy faster than viscosity can remove it, leading to singular behavior.
+
+\textbf{The 6D Picture:} In our framework, the viscous term is revealed as the projection of a \textit{conservative exchange}:
+\begin{equation}
+    \nu \Delta_x u \quad \longleftarrow \quad \text{Proj}(\Delta_p \Psi)
+\end{equation}
+
+The operator $\Delta_p$ does not destroy energy; it \textit{couples} degrees of freedom:
+\begin{itemize}
+    \item \textbf{Linear momentum modes} (grade-1 vectors in Clifford algebra): Bulk translation of fluid elements
+    \item \textbf{Angular momentum modes} (grade-2 bivectors in Clifford algebra): Rotational motion of molecules
+\end{itemize}
+
+The scleronomic constraint $\mathcal{D}^2 \Psi = (\Delta_x - \Delta_p)\Psi = 0$ enforces:
+\begin{equation}
+    \Delta_x \Psi = \Delta_p \Psi
+\end{equation}
+
+This is \textit{not} a boundary condition or an approximation---it is the defining property of solutions in the 6D space. It states that spatial curvature (concentration of linear momentum) \textit{exactly equals} momentum curvature (excitation of angular modes).
+
+\textbf{The Smoothing Mechanism:} Consider what happens as energy begins to concentrate at small scales:
+\begin{enumerate}
+    \item Advection creates steep velocity gradients: $|\nabla u| \to \text{large}$
+    \item This increases spatial curvature: $|\Delta_x \Psi| \to \text{large}$
+    \item By the exchange identity: $|\Delta_p \Psi| \to \text{large}$ \textit{equally}
+    \item Energy transfers to rotational modes at the molecular scale
+    \item The gradient is smoothed because energy has redistributed
+\end{enumerate}
+
+The process is automatic and \textit{instantaneous} (in the continuum limit). There is no delay between energy concentration and redistribution because the exchange identity is an algebraic constraint, not a dynamical relaxation.
+
+\textbf{The Mean Free Path:} The exchange operates above the mean free path $\lambda = v_{\text{th}} \tau$, where molecular collisions are frequent. Below this scale, kinetic theory (not continuum mechanics) governs the dynamics. The Navier-Stokes equations are \textit{derived} from kinetic theory via the Chapman-Enskog expansion precisely by averaging over these molecular exchanges. Our framework restores what that averaging obscured.
+
+\textbf{Why Standard Analysis Missed This:} Traditional PDE analysis treats $\nu$ as a given constant and asks whether solutions remain smooth. This is analogous to asking whether a pendulum has bounded motion without specifying the length of the string. The question is ill-posed because it ignores the physical mechanism encoded in $\nu$. By restoring the operator $\Delta_p$, we supply the missing information: energy has a reservoir (molecular rotation) that prevents unbounded concentration.
+
 \vspace{1em}
 \hrule
 \vspace{1em}

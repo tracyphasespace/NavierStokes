@@ -88,6 +88,20 @@ Consider the viscosity term $\nu \Delta u$. The coefficient $\nu$ (kinematic vis
 
 The viscosity is \textit{measured externally} and inserted into the equations. It is, in a precise sense, an IOU---a placeholder for physics the 3D state space cannot express.
 
+\subsection{Physical Intuition: The Dancer Analogy}
+
+The Navier-Stokes problem has remained unsolved because mathematicians have treated viscosity as a simple \textbf{constant}---just a static number that drains energy. In reality, that number masks a dynamic \textbf{exchange operator}.
+
+Think of fluid particles like dancers. In the traditional formulation, viscosity is merely friction that slows them down---energy disappears into an abstract ``heat bath.'' In our framework, viscosity is like the moment two dancers lock arms: they convert their forward motion (\textit{linear momentum}) into a spin (\textit{angular momentum}).
+
+\begin{center}
+\textit{They don't crash; they spin.}
+\end{center}
+
+This exchange allows energy to flow safely between moving forward and spinning around, inherently smoothing out the turbulence that would otherwise cause the mathematical equations to break. The ``blow-up'' that mathematicians have feared for 200 years is simply impossible---not because we added a constraint, but because we recognized that the energy has somewhere to go.
+
+The constant $\nu$ is not a drain with unlimited capacity. It is the \textit{average rate} of a physical exchange process that operates at the molecular scale. By restoring this process to the mathematics, we restore the safety valve that prevents singularities.
+
 \subsection{The Resolution}
 
 We propose that the apparent ``blow-up problem'' is not a property of fluid dynamics but an artifact of incomplete state description. The 3D velocity field $u(x,t)$ is a \textit{projection} of a more complete 6D phase space state $\Psi(x,p,t)$ that includes momentum degrees of freedom.
