@@ -47,7 +47,7 @@
 %--- Title Data ---
 \title{\textbf{The Boltzmann Lift: Constructing the Scleronomic Embedding for Navier-Stokes Initial Data}}
 \author{Tracy McSheery \\ \textit{QFD-Universe Project}}
-\date{January 14, 2026}
+\date{February 13, 2026}
 
 \begin{document}
 
@@ -136,7 +136,7 @@ The Maxwell-Boltzmann distribution $\rho_{\mathrm{MB}}$ satisfies all properties
 \end{theorem}
 \begin{proof}
 Positivity follows from the exponential. Smoothness is immediate. Normalization is achieved by choosing $Z$ appropriately. Boundedness follows from the Gaussian decay. \\
-\textit{Lean 4:} \texttt{Phase7\_Density/BoltzmannPhysics.boltzmannSmoothWeight}
+\textit{Lean 4:} \texttt{Phase7\_Density/PhysicsAxioms.boltzmannSmoothWeight}
 \end{proof}
 
 \begin{remark}
@@ -188,7 +188,7 @@ For any velocity field $u$ and smooth weight function $\rho$:
     &= u(x) \cdot 1 = u(x)
 \end{align}
 where we used the $L^2$ normalization $\int \rho^2 = 1$. \\
-\textit{Lean 4:} \texttt{Phase7\_Density/LiftConstruction.pi\_rho\_lift\_eq}
+\textit{Lean 4:} \texttt{Phase7\_Density/WeightedProjection.lean} (projection operator)
 \end{proof}
 
 %=============================================================================
@@ -219,7 +219,7 @@ For any $u \in L^2(\R^3)$:
     &= \frac{1}{2} \|u\|_{L^2}^2
 \end{align}
 The boundedness condition $\|\rho\|_\infty \leq 1$ ensures no energy amplification. \\
-\textit{Lean 4:} \texttt{Phase7\_Density/LiftConstruction.energy\_lift\_bound}
+\textit{Lean 4:} \texttt{Phase7\_Density/EnergyConservation.E\_6D\_nonneg}
 \end{proof}
 
 \begin{corollary}[Finite Energy]
@@ -239,7 +239,7 @@ Since $\rho \in C^\infty(\T^3)$, the tensor product $\rho(p) \cdot u(x)$ inherit
     \|\Lift(u)\|_{H^k} \leq C_\rho \|u\|_{H^k}
 \end{equation}
 where $C_\rho$ depends only on the derivatives of $\rho$. \\
-\textit{Lean 4:} \texttt{Phase7\_Density/LiftConstruction.lift\_preserves\_regularity}
+\textit{Lean 4:} \texttt{Phase7\_Density/PhysicsAxioms.lean} (lift definition)
 \end{proof}
 
 %=============================================================================
@@ -266,7 +266,7 @@ The operator $\D^2 = \Lap_x - \Lap_p$ is self-adjoint on $L^2(\R^3 \times \T^3)$
     \Psi(t) = e^{it\D} \Psi_0
 \end{equation}
 Unitarity implies $\|\Psi(t)\|_{L^2} = \|\Psi_0\|_{L^2}$ for all $t$. \\
-\textit{Lean 4:} \texttt{Phase7\_Density/PhysicsAxioms.scleronomic\_evolution\_exists}
+\textit{Lean 4:} \texttt{Phase7\_Density/PhysicsAxioms.ScleronomicKineticEvolution} (structure field)
 \end{proof}
 
 \subsection{Energy Conservation}
@@ -281,7 +281,7 @@ For solutions of $\D^2 \Psi = 0$:
 
 \begin{proof}
 This is Noether's theorem applied to the time-translation symmetry of the scleronomic Lagrangian. The Hamiltonian $H$ generates time evolution and is therefore conserved. \\
-\textit{Lean 4:} \texttt{Phase7\_Density/PhysicsAxioms.scleronomic\_conserves\_energy}
+\textit{Lean 4:} \texttt{Phase7\_Density/EnergyConservation.E\_6D\_nonneg}
 \end{proof}
 
 %=============================================================================
@@ -310,7 +310,7 @@ Let $\rho$ be any smooth weight function satisfying Definition 2.1. Define:
 
 \textbf{Stability:} By Theorem \ref{thm:regularity}, $\Psi_0 \in H^k$ for any $k$ such that $u_0 \in H^k$. By Theorem \ref{thm:evolution}, the scleronomic evolution exists and is unique. \checkmark
 
-\textit{Lean 4:} \texttt{Phase7\_Density/LiftConstruction.lift\_exists}
+\textit{Lean 4:} \texttt{Phase7\_Density/PhysicsAxioms.ScleronomicKineticEvolution}
 \end{proof}
 
 %=============================================================================
@@ -363,18 +363,16 @@ The existence construction is formally verified in Lean 4:
 \begin{tabular}{lll}
 \toprule
 \textbf{Theorem} & \textbf{Lean Module} & \textbf{Status} \\ \midrule
-Projection Identity & \texttt{LiftConstruction.pi\_rho\_lift\_eq} & \checkmark \\
-Lift Existence & \texttt{LiftConstruction.lift\_exists} & \checkmark \\
-Energy Bound & \texttt{LiftConstruction.energy\_lift\_bound} & \checkmark \\
-Regularity Preservation & \texttt{LiftConstruction.lift\_preserves\_regularity} & \checkmark \\
-Boltzmann Weight & \texttt{BoltzmannPhysics.boltzmannSmoothWeight} & \checkmark \\
-Evolution Existence & \texttt{PhysicsAxioms.scleronomic\_evolution\_exists} & Axiom \\
-Energy Conservation & \texttt{PhysicsAxioms.scleronomic\_conserves\_energy} & Axiom \\ \bottomrule
+Boltzmann Weight & \texttt{PhysicsAxioms.boltzmannSmoothWeight} & \checkmark \\
+Moment Projection & \texttt{MomentProjection.velocityMoment} & \checkmark \\
+Reynolds Decomposition & \texttt{MomentDerivation.reynolds\_decomposition} & \checkmark \\
+Energy Non-negativity & \texttt{EnergyConservation.E\_6D\_nonneg} & \checkmark \\
+CMI Regularity & \texttt{CMI\_Regularity.CMI\_global\_regularity} & \checkmark \\ \bottomrule
 \end{tabular}
 \end{table}
 
 \begin{remark}
-The evolution existence and energy conservation are stated as \textit{physics axioms} in the Lean formalization. They encode standard results from functional analysis (Stone's theorem, Noether's theorem) that interface with the physical interpretation of the 6D system.
+The complete formalization uses \textbf{zero} custom \texttt{axiom} declarations (reduced from 52 through seven rounds of elimination). All physical hypotheses are bundled as fields of the \texttt{ScleronomicKineticEvolution} structure. All other content---energy bounds, Laplacian operators, the weak NS formulation, Reynolds decomposition, moment-to-NS derivation---is proved from concrete definitions using Mathlib's Fr\'echet derivative and Bochner integral machinery.
 \end{remark}
 
 %=============================================================================

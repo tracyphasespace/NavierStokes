@@ -77,74 +77,21 @@ theorem pi_rho_bounded_L2 (ρ : SmoothWeight) (_Ψ : PhaseSpaceField)
   use 1
   norm_num
 
-/--
-  **LEMMA 2: Projection Commutes with Spatial Derivatives**
+-- LEMMA 7.2 (pi_rho_comm_dx): Projection commutes with spatial derivatives.
+--   ∂_{xᵢ}(π_ρ Ψ) = π_ρ(∂_{xᵢ} Ψ)
+-- Proof: Leibniz integral rule — ρ(p) depends only on p, passes through ∂_x.
+-- Requires: dominated convergence theorem for fderiv under Bochner integral.
+-- Status: NOT YET PROVED (needs Mathlib's integral_fderiv or similar).
 
-  For any direction i, the weighted projection commutes with ∂_{x_i}:
-    ∂_{x_i} (π_ρ Ψ) = π_ρ (∂_{x_i} Ψ)
+-- LEMMA 7.3 (pi_rho_comm_dt): Projection commutes with time derivative.
+--   ∂_t(π_ρ Ψ(t)) = π_ρ(∂_t Ψ(t))
+-- Proof: Same Leibniz rule — ρ(p) is time-independent.
+-- Status: NOT YET PROVED (same machinery as Lemma 7.2).
 
-  Proof sketch:
-  1. By Leibniz rule for differentiation under the integral:
-     ∂_x (∫_p ρ(p) Ψ(x,p) dp) = ∫_p ρ(p) ∂_x Ψ(x,p) dp
-  2. Since ρ(p) depends only on p (not x), it passes through ∂_x.
-  3. Iterate for higher derivatives.
-
-  [LEMMA 7.2] [PI_COMM_DX]
--/
-theorem pi_rho_comm_dx (ρ : SmoothWeight) (Ψ : PhaseSpaceField) (i : Fin 3) :
-    projectionWeighted ρ (partialX i Ψ) = projectionWeighted ρ (partialX i Ψ) := by
-  -- This is a structural theorem about derivative commutation
-  -- The key mathematical content: Leibniz integral rule
-  -- Since partialX is currently id (placeholder), this is reflexivity
-  rfl
-
-/--
-  **LEMMA 3: Projection Commutes with Time Derivative**
-
-  For a time-dependent field Ψ(t), the weighted projection commutes with ∂_t:
-    ∂_t (π_ρ Ψ(t)) = π_ρ (∂_t Ψ(t))
-
-  Proof sketch:
-  1. By Leibniz rule for time derivative under the integral:
-     d/dt (∫_p ρ(p) Ψ(t,x,p) dp) = ∫_p ρ(p) ∂_t Ψ(t,x,p) dp
-  2. Since ρ(p) is time-independent, it passes through ∂_t.
-
-  [LEMMA 7.3] [PI_COMM_DT]
--/
-theorem pi_rho_comm_dt (ρ : SmoothWeight)
-    (Ψ : ℝ → PhaseSpaceField)
-    (t : ℝ) (_x : Position) :
-    True := by
-  -- This is a structural theorem about time derivatives
-  -- Full proof requires defining proper time derivative on function spaces
-  -- and using Leibniz integral rule (integral_deriv_swap in Mathlib)
-  trivial
-
-/-! ## Higher-Order Sobolev Bounds -/
-
-/--
-  **LEMMA 1-General: Projection is Bounded on H^k**
-
-  The weighted projection extends to a bounded operator H^k(ℝ³ × 𝕋³) → H^k(ℝ³).
-
-  Proof:
-  By induction on k using Lemma 2 (commutation with derivatives):
-  - k = 0: This is Lemma 1 (L² bound)
-  - k → k+1: Use ∂_x(π_ρ Ψ) = π_ρ(∂_x Ψ) and apply induction
-
-  [LEMMA 7.4] [PI_BOUNDED_HK]
--/
-theorem pi_rho_bounded_Hk (ρ : SmoothWeight) (k : ℕ) :
-    ∃ C : ℝ, C > 0 ∧
-    ∀ Ψ : RegularPhaseField k,
-    True := by
-  -- Existence of bound by induction on k
-  use C_rho ρ
-  constructor
-  · unfold C_rho; norm_num
-  · intro Ψ
-    -- Bound follows from L² bound + derivative commutation
-    trivial
+-- LEMMA 7.4 (pi_rho_bounded_Hk): Projection is bounded H^k → H^k.
+--   ‖π_ρ Ψ‖_{H^k} ≤ C_ρ · ‖Ψ‖_{H^k}
+-- Proof: Induction on k using Lemma 7.2 + L² bound (Lemma 7.1).
+-- Status: NOT YET PROVED (requires Sobolev norm definitions + Lemma 7.2).
 
 /-! ## The Non-Constant Weight Advantage -/
 
@@ -167,26 +114,10 @@ theorem nonconstant_weight_principle (ρ : NonConstantWeight) :
     ∃ p₁ p₂ : Torus3, ρ.toSmoothWeight.ρ p₁ ≠ ρ.toSmoothWeight.ρ p₂ := by
   exact ρ.nonconstant
 
-/-! ## Structure for Paper 3 Integration -/
-
-/-- Bundle of the three projection lemmas needed for Paper 3. -/
-structure ProjectionLemmas (ρ : SmoothWeight) : Prop where
-  /-- L² boundedness -/
-  bounded_L2 : ∃ C > 0, ∀ Ψ : PhaseSpaceField, True  -- Simplified statement
-  /-- Commutation with spatial derivatives (structural) -/
-  comm_dx : ∀ i : Fin 3, ∀ Ψ : PhaseSpaceField,
-    projectionWeighted ρ (partialX i Ψ) = projectionWeighted ρ (partialX i Ψ)
-  /-- Commutation with time (structural) -/
-  comm_dt : True
-
-/-- The three projection lemmas hold for any smooth weight. -/
-theorem projection_lemmas_hold (ρ : SmoothWeight) : ProjectionLemmas ρ := by
-  constructor
-  · use 1, one_pos
-    intro _; trivial
-  · intro i Ψ
-    rfl
-  · trivial
+-- ProjectionLemmas bundle removed: previously contained vacuous tautologies.
+-- The real claims (L² boundedness, derivative commutation) are documented
+-- above as Lemmas 7.1–7.4 and will be provable when Mathlib gains the
+-- required Leibniz integral rule and Sobolev norm machinery.
 
 /-! ## Technical Notes
 

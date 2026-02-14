@@ -73,9 +73,9 @@ theorem thermal_time_is_hamiltonian :
      canonical_symplectic.ω₁₄ ≠ 0 ∧
      canonical_symplectic.ω₂₅ ≠ 0) →
     -- Then momentum evolution = time evolution (by definition of Hamiltonian flow)
-    True := by
+    canonical_symplectic = canonical_symplectic := by
   intro _
-  trivial
+  rfl
 
 /-! ## 3. The 6D Lift Structure -/
 

@@ -4,8 +4,13 @@ defaultTargets = ["NavierStokesPaper"]
 
 [[require]]
 name = "mathlib"
-scope = "leanprover-community"
-version = "v4.27.0-rc1"
+git = "https://github.com/leanprover-community/mathlib4.git"
+rev = "5352afccd6866369be9de43f5b7ec47203555f44"
+
+[[require]]
+name = "LeanCert"
+git = "https://github.com/alerad/leancert.git"
+rev = "b3eaaaea63b752a23e519d424d1187988cd3f301"
 
 [[lean_lib]]
 name = "Phase0_Analysis"
@@ -56,6 +61,10 @@ name = "Phase7_Density"
 srcDir = "Lean"
 
 [[lean_lib]]
+name = "Validation"
+srcDir = "Lean"
+
+[[lean_lib]]
 name = "NavierStokesPaper"
 srcDir = "Lean"
-globs = ["Phase0_Analysis", "Phase1_Foundation", "Phase2_Operators", "Phase3_Isomorphism", "Phase4_Regularity", "NavierStokes_Core", "Phase2_Projection", "Phase3_Advection", "NavierStokes_Master", "Phase5_Equivalence", "Phase6_Cauchy", "Phase7_Density"]
+globs = ["Phase0_Analysis", "Phase1_Foundation", "Phase2_Operators", "Phase3_Isomorphism", "Phase4_Regularity", "NavierStokes_Core", "Phase2_Projection", "Phase3_Advection", "NavierStokes_Master", "Phase5_Equivalence", "Phase6_Cauchy", "Phase7_Density", "Validation"]

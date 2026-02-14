@@ -57,16 +57,11 @@ We resolve this by working with explicit measure space variables rather than
 trying to prove instance equality.
 -/
 
-/-- The measurable spaces on Torus3 are compatible for integration purposes.
-    This is a structural assertion that the product measure on Fin 3 → AddCircle
-    is compatible with the quotient group measure on each factor.
+-- The measurable spaces on Torus3 are compatible for integration purposes.
+-- The actual instance reconciliation happens via the [MeasureSpace Torus3]
+-- variable in theorems, allowing callers to provide the appropriate instance.
 
-    Note: The actual instance reconciliation happens via the [MeasureSpace Torus3]
-    variable in theorems, allowing callers to provide the appropriate instance. -/
-theorem torus3_measurable_compatible :
-    ∀ (f : Torus3 → ℝ), Measurable f → Measurable f := fun _ hf => hf
-
-/-- **Typeclass Diamond Resolution Strategy**
+/-! **Typeclass Diamond Resolution Strategy**
 
     The diamond between `MeasurableSpace.pi` and `[MeasureSpace Torus3]` cannot be
     resolved by `rfl` because they are structurally different instances:
@@ -84,8 +79,8 @@ theorem torus3_measurable_compatible :
     The alternative (proving instance equality) would require showing that the
     product σ-algebra equals the quotient σ-algebra, which is a deep measure theory fact.
 -/
-theorem integral_coercion_documentation :
-    True := trivial
+-- Documentation: the IntegralCoercionHolds hypothesis is consistent and dischargeable
+-- for any concrete weight function.
 
 /-- Position space: ℝ³ -/
 abbrev Position := EuclideanSpace ℝ (Fin 3)
@@ -142,30 +137,8 @@ def ScalarVelocityField := Position → ℂ
 instance : AddCommGroup ScalarVelocityField := Pi.addCommGroup
 instance : Module ℂ ScalarVelocityField := Pi.module _ _ _
 
-/-! ## Regularity Conditions -/
-
-/-- A phase space field is k-times continuously differentiable
-    if all partial derivatives up to order k exist and are continuous.
-
-    This is a structural property encoded as a predicate.
-    Note: Full Sobolev regularity would use distributional derivatives. -/
-structure HasSobolevReg (k : ℕ) (Ψ : PhaseSpaceField) : Prop where
-  /-- The field is measurable -/
-  measurable : Measurable Ψ
-  /-- Higher regularity: encoded abstractly.
-      Full definition would use distributional derivatives. -/
-  reg_order : k ≥ 0  -- Always true, placeholder for actual derivative conditions
-
-/-- A phase space field with explicit regularity parameter.
-    This bundles the field with its regularity proof. -/
-structure RegularPhaseField (k : ℕ) where
-  /-- The underlying function -/
-  toFun : PhaseSpaceField
-  /-- Regularity certificate -/
-  reg : HasSobolevReg k toFun
-
-instance (k : ℕ) : CoeFun (RegularPhaseField k) (fun _ => PhaseSpaceField) where
-  coe := RegularPhaseField.toFun
+-- HasSobolevReg / RegularPhaseField deleted (trivially true reg_order : k ≥ 0 field,
+-- only used by archived LiftConstruction.lean)
 
 /-! ## Weight Functions for Projection -/
 
@@ -228,26 +201,25 @@ These are captured as hypotheses in theorems that need them.
 /-- Abstract partial derivative operator type. -/
 abbrev DerivativeOp := PhaseSpaceField → PhaseSpaceField
 
-/-- Abstract partial derivative in position direction i.
-    This is the weak/distributional derivative ∂/∂xᵢ. -/
+/-- Partial derivative in position direction i: ∂Ψ/∂xᵢ.
+    Uses Mathlib's `fderiv` (Fréchet derivative) on the Position component.
+    When Ψ is not differentiable at x, fderiv returns 0 (conservative). -/
 def partialX (i : Fin 3) : DerivativeOp :=
   fun Ψ => fun (x, p) =>
-    -- Abstract: represents lim_{h→0} (Ψ(x + h·eᵢ, p) - Ψ(x, p)) / h
-    -- For now, we use a structural placeholder that allows type-checking
-    -- Real implementation would use Mathlib's fderiv
-    Ψ (x, p)  -- Identity as structural placeholder
+    fderiv ℝ (fun y : Position => Ψ (y, p)) x (EuclideanSpace.single i 1)
 
-/-- Abstract partial derivative in momentum direction j.
-    This is the weak/distributional derivative ∂/∂pⱼ. -/
+/-- Partial derivative in momentum direction j: ∂Ψ/∂pⱼ.
+    Uses fderiv via quotient map lift: lifts through
+    `QuotientAddGroup.mk : ℝ → AddCircle (2π)` and differentiates in ℝ.
+    `Quotient.out` provides a representative. Same pattern as gradPNormSq. -/
 def partialP (j : Fin 3) : DerivativeOp :=
   fun Ψ => fun (x, p) =>
-    -- Abstract: represents derivative with respect to momentum component j
-    Ψ (x, p)  -- Identity as structural placeholder
+    fderiv ℝ (fun s : ℝ => Ψ (x, Function.update p j (QuotientAddGroup.mk s)))
+      (Quotient.out (p j)) 1
 
 /-- Apply a multi-index of x-derivatives: ∂^α_x = ∂^{α₁}_{x₁} ∂^{α₂}_{x₂} ∂^{α₃}_{x₃} -/
 def applyMultiDerivX (α : MultiIndex) : DerivativeOp :=
-  -- Would compose partialX based on α
-  fun Ψ => Ψ  -- Structural placeholder
+  (partialX 0)^[α 0] ∘ (partialX 1)^[α 1] ∘ (partialX 2)^[α 2]
 
 /-- A derivative operator is linear. -/
 def IsLinearDerivative (D : DerivativeOp) : Prop :=
