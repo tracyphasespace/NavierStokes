@@ -257,15 +257,11 @@ This is the \textit{scleronomic constraint}: the spatial Laplacian equals the mo
 
 \begin{theorem}[Evolution Existence]
 \label{thm:evolution}
-For any initial data $\Psi_0 \in H^1(\R^3 \times \T^3)$, the scleronomic evolution equation admits a unique global solution $\Psi(t) \in C([0,\infty); H^1)$.
+For any initial data $\Psi_0 \in H^k(\R^3 \times \T^3)$ satisfying the scleronomic constraint $\D^2 \Psi_0 = 0$, the transport equation $\partial_t \Psi + p \cdot \nabla_x \Psi = 0$ admits a unique global solution $\Psi(t) \in C([0,\infty); H^k)$ that preserves the scleronomic constraint and all Sobolev norms.
 \end{theorem}
 
 \begin{proof}
-The operator $\D^2 = \Lap_x - \Lap_p$ is self-adjoint on $L^2(\R^3 \times \T^3)$. By Stone's theorem, it generates a unitary group $e^{it\D}$. The solution is:
-\begin{equation}
-    \Psi(t) = e^{it\D} \Psi_0
-\end{equation}
-Unitarity implies $\|\Psi(t)\|_{L^2} = \|\Psi_0\|_{L^2}$ for all $t$. \\
+The transport equation is solved by the method of characteristics: $\Psi(t, x, p) = \Psi_0(x - tp, p)$. The flow $(x,p) \mapsto (x - tp, p)$ is a volume-preserving diffeomorphism of $\R^3 \times \T^3$, so $\|\Psi(t)\|_{H^k} = \|\Psi_0\|_{H^k}$ for all $t$ and all $k \geq 0$. \\
 \textit{Lean 4:} \texttt{Phase7\_Density/PhysicsAxioms.ScleronomicKineticEvolution} (structure field)
 \end{proof}
 

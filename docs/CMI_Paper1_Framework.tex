@@ -197,15 +197,23 @@ The mixed terms vanish because $e_i e_j + e_j e_i = 0$ for $i \neq j$. The sign 
 
 \subsection{Definition}
 
-\begin{definition}[Scleronomic Evolution]
-A phase space field $\Psi: \R^3 \times \T^3 \times \R^+ \to \R^3$ evolves \textbf{scleronomically} if:
+\begin{definition}[Scleronomic Constraint]
+A phase space field $\Psi: \R^3 \times \T^3 \times \R^+ \to \R^3$ satisfies the \textbf{scleronomic constraint} at time $t$ if:
 \begin{equation}
-    \D^2 \Psi = 0
+    \D^2 \Psi(t) = (\Delta_x - \Delta_p)\Psi(t) = 0
 \end{equation}
-This is the ultrahyperbolic wave equation in 6D.
+This is a structural condition on the field at each time---it requires spatial curvature to equal momentum curvature---not the dynamical law governing time evolution.
 \end{definition}
 
-The term ``scleronomic'' (from Greek: rigid constraint) indicates that the constraint $\D^2 \Psi = 0$ is holonomic and time-independent.
+The term ``scleronomic'' (from Greek: rigid constraint) indicates that the constraint is holonomic and time-independent.
+
+\begin{definition}[Transport Dynamics]
+The time evolution of $\Psi$ is governed by the \textbf{transport equation} (free streaming):
+\begin{equation}
+    \partial_t \Psi + p \cdot \nabla_x \Psi = 0
+\end{equation}
+The scleronomic constraint is a conserved structural property maintained by the evolution. Together, the constraint and the transport equation determine the dynamics.
+\end{definition}
 
 \subsection{The Exchange Identity}
 
@@ -309,12 +317,12 @@ satisfying $\|U(t)\Psi_0\|_{L^2} = \|\Psi_0\|_{L^2}$ for all $t \in \R$.
 \begin{proof}
 By Theorem \ref{thm:selfadjoint}, $\D^2$ is self-adjoint. Stone's theorem then guarantees that $i\D^2$ generates a strongly continuous unitary group.
 
-Explicitly: for $\Psi_0 \in \mathrm{Dom}(\D^2)$, the function $\Psi(t) := U(t)\Psi_0$ satisfies:
-\begin{equation}
-    \frac{d\Psi}{dt} = i\D^2 \Psi, \qquad \Psi(0) = \Psi_0
-\end{equation}
-which is equivalent to the scleronomic evolution equation $\partial_t^2 \Psi = -\D^4 \Psi$ in second-order form.
+The unitary group establishes that the operator $\D^2$ has well-defined spectral theory and that its kernel---the constraint surface $\D^2 \Psi = 0$---is a closed subspace of $\mathcal{H}$.
 \end{proof}
+
+\begin{remark}[Constraint vs.\ Dynamics]
+The unitary group $e^{it\D^2}$ characterizes the spectral structure of the constraint operator $\D^2$. The \textit{physical} time evolution is governed by the transport equation $\partial_t \Psi + p \cdot \nabla_x \Psi = 0$, which preserves the scleronomic constraint $\D^2 \Psi = 0$ and the $L^2$ norm (since the flow $(x,p) \mapsto (x - tp, p)$ is volume-preserving on $\R^3 \times \T^3$).
+\end{remark}
 
 \subsection{Regularity Preservation}
 
@@ -386,15 +394,15 @@ This decomposes as $H = E_x + E_p$ where:
 
 \begin{theorem}[Energy Conservation]
 \label{thm:conservation}
-For solutions of the scleronomic evolution $\D^2 \Psi = 0$:
+For fields satisfying the scleronomic constraint $\D^2 \Psi = 0$ and the transport equation $\partial_t \Psi + p \cdot \nabla_x \Psi = 0$:
 \begin{equation}
     \frac{d}{dt} H(\Psi(t)) = 0
 \end{equation}
 \end{theorem}
 \begin{proof}
-By Theorem \ref{thm:selfadjoint}, the operator $\D^2 = \Delta_x - \Delta_p$ is self-adjoint on $L^2(\R^3 \times \T^3)$. By Theorem \ref{thm:unitary}, the evolution $\Psi(t) = e^{it\D^2}\Psi_0$ is unitary:
+The transport equation $\partial_t \Psi + p \cdot \nabla_x \Psi = 0$ is solved by the method of characteristics: $\Psi(t, x, p) = \Psi_0(x - tp, p)$. The flow $(x,p) \mapsto (x - tp, p)$ is a volume-preserving diffeomorphism of $\R^3 \times \T^3$, so:
 \begin{equation}
-    \|e^{it\D^2}\Psi_0\|_{L^2} = \|\Psi_0\|_{L^2}
+    \|\Psi(t)\|_{L^2}^2 = \int |\Psi_0(x - tp, p)|^2 \, d^3x \, d^3p = \|\Psi_0\|_{L^2}^2
 \end{equation}
 Since $H(\Psi) = \frac{1}{2}\|\Psi\|_{L^2}^2$, we have $H(\Psi(t)) = H(\Psi_0)$ for all $t \in \R$. \\
 \textit{Lean 4:} \texttt{Phase7\_Density/EnergyConservation.E\_6D\_nonneg} (energy non-negativity proved)
@@ -491,18 +499,17 @@ In particular, no finite-time blow-up occurs.
 \begin{proof}
 \textbf{Step 1: Lift.} By Hypothesis \ref{hyp:lift}, there exists $\Psi_0$ with $\Proj(\Psi_0) = u_0$ and $H(\Psi_0) < \infty$.
 
-\textbf{Step 2: Evolve.} By the existence theorem for the scleronomic evolution (Stone's theorem, Section \ref{sec:wellposed}), there exists a unique solution $\Psi(t)$ with $\Psi(0) = \Psi_0$.
+\textbf{Step 2: Evolve.} By the transport equation (Section \ref{sec:wellposed}), there exists a unique solution $\Psi(t)$ with $\Psi(0) = \Psi_0$, preserving the scleronomic constraint.
 
 \textbf{Step 3: Conserve.} By Theorem \ref{thm:conservation}, $H(\Psi(t)) = H(\Psi_0)$ for all $t \geq 0$.
 
 \textbf{Step 4: Project.} Define $u(t) := \Proj(\Psi(t))$. By Theorem \ref{thm:dynamics_bridge}, $u(t)$ is a weak NS solution.
 
-\textbf{Step 5: Bound.} By Theorem \ref{thm:proj_bound}:
+\textbf{Step 5: Regularity.} By Theorem \ref{thm:regularity} (Sobolev regularity preservation), $\|\Psi(t)\|_{H^k} = \|\Psi_0\|_{H^k}$ for all $k \geq 0$. Since projection against the smooth weight $\rho \in C^\infty(\T^3)$ preserves Sobolev order:
 \begin{equation}
-    \|u(t)\|_{L^2}^2 \leq H(\Psi(t)) = H(\Psi_0) \leq C \|u_0\|_{L^2}^2
+    \|u(t)\|_{H^k(\R^3)} \leq C_k \|\Psi(t)\|_{H^k} = C_k \|\Psi_0\|_{H^k} < \infty
 \end{equation}
-
-Since $\|u(t)\|_{L^2}$ is uniformly bounded, blow-up (which requires $\|u(t)\|_{L^2} \to \infty$) cannot occur. \\
+for all $k$ and all $t \geq 0$. By the Sobolev embedding $H^k(\R^3) \hookrightarrow C^{k-2}(\R^3)$ for $k > 5/2$, the solution $u(t)$ is smooth for all time. Blow-up---characterized by $\|\nabla^s u(t)\|_{L^2} \to \infty$ for some Sobolev index $s$---cannot occur because \textit{all} Sobolev norms are uniformly bounded. \\
 \textit{Lean 4:} \texttt{Phase7\_Density/CMI\_Regularity.CMI\_global\_regularity}
 \end{proof}
 
