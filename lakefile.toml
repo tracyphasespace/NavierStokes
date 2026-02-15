@@ -65,6 +65,10 @@ name = "Validation"
 srcDir = "Lean"
 
 [[lean_lib]]
+name = "Cosserat"
+srcDir = "Lean"
+
+[[lean_lib]]
 name = "NavierStokesPaper"
 srcDir = "Lean"
-globs = ["Phase0_Analysis", "Phase1_Foundation", "Phase2_Operators", "Phase3_Isomorphism", "Phase4_Regularity", "NavierStokes_Core", "Phase2_Projection", "Phase3_Advection", "NavierStokes_Master", "Phase5_Equivalence", "Phase6_Cauchy", "Phase7_Density", "Validation"]
+globs = ["Phase0_Analysis", "Phase1_Foundation", "Phase2_Operators", "Phase3_Isomorphism", "Phase4_Regularity", "NavierStokes_Core", "Phase2_Projection", "Phase3_Advection", "NavierStokes_Master", "Phase5_Equivalence", "Phase6_Cauchy", "Phase7_Density", "Validation", "Cosserat"]
